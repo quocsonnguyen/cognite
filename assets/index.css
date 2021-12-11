@@ -1,0 +1,44 @@
+#container {
+    padding-top: 15px;
+}
+
+.greeting {
+    text-align: center;
+}
+
+.table-data {
+    max-height: 95.5vh;
+    overflow-y: scroll;
+}
+
+thead {
+    background-color: #28a745;
+    color: white;
+}
+
+th, td {
+    text-align: center;
+}
+
+.inputs-section {
+    padding: 0 30px;
+    margin-top: 50px;
+}
+
+.input {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+input {
+    text-align: center;
+}
+
+.save-btn {
+    text-align: center;
+    margin-top: 1.2rem;
+}
+
+.instruction-section {
+    border-left: 1px solid #eee;
+}
