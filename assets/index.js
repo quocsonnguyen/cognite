@@ -32,14 +32,14 @@ function deleteRow(rowId) {
                         let tr = document.createElement('tr')
                         tr.innerHTML = `
                             <tr>
-                                <th scope="row">${i+1}</th>
-                                <td>${result.data[i][0]}</td>
-                                <td>${result.data[i][1]}</td>
-                                <td>${result.data[i][2]}</td>
-                                <td>${result.data[i][3]}</td>
-                                <td>
+                                <th class="align-middle"  scope="row">${i+1}</th>
+                                <td class="align-middle">${result.data[i][1]}</td>
+                                <td class="align-middle">${result.data[i][0]}</td>
+                                <td class="align-middle">${result.data[i][2]}</td>
+                                <td class="align-middle">${result.data[i][3]}</td>
+                                <td class="align-middle">
                                     <button 
-                                        class="btn btn-danger type="button" 
+                                        class="button-delete" type="button" 
                                         data-toggle="modal" data-target="#confirmDeleteModal"
                                         onclick="preDeleteRow(${i+1})">
                                         Delete
@@ -107,14 +107,14 @@ $(document).ready(function(){
                     let tr = document.createElement('tr')
                     tr.innerHTML = `
                         <tr>
-                            <th scope="row">${count}</th>
-                            <td>${freq.toFixed(1)}</td>
-                            <td>${ps.toFixed(2)}</td>
-                            <td>${p.toFixed(1)}</td>
-                            <td>${addedTime}</td>
-                            <td>
+                            <th class="align-middle" scope="row">${count}</th>
+                            <td class="align-middle">${ps.toFixed(2)}</td>
+                            <td class="align-middle">${freq.toFixed(1)}</td>
+                            <td class="align-middle">${p.toFixed(1)}</td>
+                            <td class="align-middle">${addedTime}</td>
+                            <td class="align-middle">
                                 <button 
-                                    class="btn btn-danger type="button" 
+                                    class="button-delete" type="button" 
                                     data-toggle="modal" data-target="#confirmDeleteModal"
                                     onclick="preDeleteRow(${count})">
                                     Delete

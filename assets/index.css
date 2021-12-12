@@ -15,6 +15,10 @@
     overflow-y: scroll;
 }
 
+.table td, .table th {
+    padding: .45rem;
+}
+
 thead {
     background-color: #28a745;
     color: white;
@@ -22,6 +26,14 @@ thead {
 
 th, td {
     text-align: center;
+}
+
+
+.col-titles {
+    display: flex;
+    align-self: center;
+    justify-content: center;
+    border-bottom: none;
 }
 
 .inputs-section {
@@ -45,4 +57,11 @@ input {
 
 .instruction-section {
     border-left: 1px solid #eee;
+}
+
+.button-delete {
+    color: white;
+    background-color: #dc3545;
+    border: none;
+    border-radius: 5px;
 }

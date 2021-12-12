@@ -15,31 +15,31 @@
         <div id="container" class="container-fluid">
             <h2 class="text-center">Cognite Neuro</h2>
             <div class="row">
-                <div class="col-6 data-section">
+                <div class="col-5 data-section">
                     <h5 class="text-center">Data</h5>
                     <div class="table-data">
                         <table class="table table-striped">
                             <thead>
                                 <tr>
-                                    <th scope="col">#</th>
-                                    <th scope="col">Frequency</th>
+                                    <th scope="col" class="align-middle">#</th>
                                     <th scope="col">Personalised Score</th>
-                                    <th scope="col">Performance</th>
-                                    <th scope="col">Added time</th>
-                                    <th scope="col">Action</th>
+                                    <th scope="col">Suggested Frequency</th>
+                                    <th scope="col" class="align-middle">Performance</th>
+                                    <th scope="col" class="align-middle">Added Time</th>
+                                    <th scope="col" class="align-middle">Action</th>
                                 </tr>
                             </thead>
                             <tbody id="tbody">
                                 {% for row in table_data %}
                                     <tr>
-                                        <th scope="row">{{ loop.index0+1 }}</th>
-                                        <td>{{ row[0] }}</td>
-                                        <td>{{ row[1] }}</td>
-                                        <td>{{ row[2] }}</td>
-                                        <td>{{ row[3] }}</td>
-                                        <td>
+                                        <th class="align-middle" scope="row">{{ loop.index0+1 }}</th>
+                                        <td class="align-middle">{{ row[1] }}</td>
+                                        <td class="align-middle">{{ row[0] }}</td>
+                                        <td class="align-middle">{{ row[2] }}</td>
+                                        <td class="align-middle">{{ row[3] }}</td>
+                                        <td class="align-middle">
                                             <button 
-                                                class="btn btn-danger" type="button"
+                                                class="button-delete" type="button"
                                                 data-toggle="modal" data-target="#confirmDeleteModal"
                                                 onclick="preDeleteRow('{{ loop.index0+1 }}')">
                                                 Delete
@@ -75,7 +75,7 @@
                     </div>
                 </div>
     
-                <div class="col-3 instruction-section">
+                <div class="col-4 instruction-section">
                     <h5 class="text-center">Instruction</h5>
                 </div>
             </div>
