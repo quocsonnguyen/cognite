@@ -1,0 +1,26 @@
+#container {
+    background-image: linear-gradient(to right, #c3f1b1 , #82e6e8);
+    height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.login-form {
+    background-color: white;
+    border-radius: 15px;
+    width: fit-content;
+    height: fit-content;
+    padding: 50px 50px;
+}
+
+form {
+    margin-top: 30px;
+    width: 350px;
+}
+
+.form-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}

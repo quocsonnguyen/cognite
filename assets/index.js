@@ -73,7 +73,7 @@ $(document).ready(function(){
                     ps: ps
                 }
             }).done(function(result) {
-                $('#freq').val(result.freq)
+                $('#freq').val(result.freq.toFixed(2))
                 console.log(result);
             })
         }

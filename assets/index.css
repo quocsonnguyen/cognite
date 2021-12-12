@@ -6,8 +6,12 @@
     text-align: center;
 }
 
+.data-section {
+    border-right: 1px solid #eee;
+}
+
 .table-data {
-    max-height: 95.5vh;
+    max-height: 84.5vh;
     overflow-y: scroll;
 }
 

@@ -1,10 +1,10 @@
-import sys
-sys.path.append('./code')
+# import sys
+# sys.path.append('./code')
 
 from typing_extensions import runtime
 from flask import Flask, request, session, render_template
 import pandas as pd
-from suggest_new_experiment import get_frequency
+# from suggest_new_experiment import get_frequency
 
 
 app = Flask(__name__, template_folder='templates', static_folder='assets')
@@ -23,6 +23,14 @@ def index():
         new_table_data.append([round(row[0],1), round(row[1], 2), float("{:.1f}".format(row[2])), row[3]])
 
     return render_template('index.html', table_data=new_table_data)
+
+@app.route('/login')
+def login():
+    return render_template('login.html', message='Wrong password!')
+
+@app.route('/register')
+def register():
+    return render_template('register.html', message='This email is already exists!')
 
 @app.route('/api/load-table')
 def load_table():
@@ -50,7 +58,7 @@ def get_freq():
         ps = float(ps)
         
         freq = ps
-        freq = get_frequency('./data/data.csv', ps)
+        # freq = get_frequency('./data/data.csv', ps)
 
         return {
             'code' : 0,
