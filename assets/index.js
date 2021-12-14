@@ -49,6 +49,8 @@ function deleteRow(rowId) {
                         `
                         tbody.append(tr)
                     }
+                } else {
+                    $('#tbody').empty()
                 }
             })
         }
@@ -73,8 +75,8 @@ $(document).ready(function(){
                     ps: ps
                 }
             }).done(function(result) {
-                $('#freq').val(result.freq.toFixed(2))
                 console.log(result);
+                $('#freq').val(result.freq.toFixed(2))
             })
         }
     })

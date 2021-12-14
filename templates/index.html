@@ -38,7 +38,7 @@
                                         <td class="align-middle">{{ row[2] }}</td>
                                         <td class="align-middle">{{ row[3] }}</td>
                                         <td class="align-middle">
-                                            <button 
+                                            <button
                                                 class="button-delete" type="button"
                                                 data-toggle="modal" data-target="#confirmDeleteModal"
                                                 onclick="preDeleteRow('{{ loop.index0+1 }}')">
@@ -53,7 +53,7 @@
                 </div>
     
                 <div class="col-3">
-                    <h5 class="text-center">Welcome, username</h5>
+                    <h5 class="text-center">Welcome, {{ username }}</h5>
                     <div class="inputs-section">
                         <div class="input">  
                             <h5>Personalised Score</h5>
