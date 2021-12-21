@@ -82,13 +82,13 @@ def index():
 
 @app.route('/admin')
 def admin():
-    # try:
-    history = History.query.all()
-    new_table_data = []
-    last_activitys = last_activity()
-    return render_template('admin.html', table_data=new_table_data, table_history=history, table_last_activity=last_activitys)
-    # except:
-    #     return render_template('admin.html')
+    try:
+        history = History.query.all()
+        new_table_data = []
+        last_activitys = last_activity()
+        return render_template('admin.html', table_data=new_table_data, table_history=history, table_last_activity=last_activitys)
+    except:
+        return render_template('admin.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
