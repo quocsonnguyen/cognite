@@ -1,13 +1,14 @@
 import os
-# import sys
-# sys.path.append('./code')
+import sys
+sys.path.append('./code')
 
 from flask import Flask, request, session, render_template, redirect
 from flask_sqlalchemy import SQLAlchemy
 from  werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime
 import pandas as pd
 import uuid
-# from suggest_new_experiment import get_frequency
+from suggest_new_experiment import get_frequency
 app = Flask(__name__, template_folder='templates', static_folder='assets')
 app.config['SECRET_KEY'] = 'cognite secret 12/2021'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
@@ -16,6 +17,14 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
 db = SQLAlchemy(app)
 DATA_PATH = './data/'
 
+class History(db.Model):
+    id = db.Column(db.Integer, primary_key = True)
+    public_id = db.Column(db.String(50), unique = True)
+    email = db.Column(db.String(70))
+    name = db.Column(db.String(100))
+    time = db.Column(db.String(70))
+    event = db.Column(db.String(80))
+
 class User(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     public_id = db.Column(db.String(50), unique = True)
@@ -23,6 +32,34 @@ class User(db.Model):
     email = db.Column(db.String(70), unique = True)
     phoneNumber = db.Column(db.String(15), unique = True)
     password = db.Column(db.String(80))
+
+
+
+def write_history(e):
+    now = datetime.now()
+    dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+    history = History(
+        public_id = str(uuid.uuid4()),
+        email = session['user_email'],
+        name = session['username'],
+        time = dt_string,
+        event = e
+    )
+    # insert user
+    db.session.add(history)
+    db.session.commit()
+
+def last_activity():
+    user = User.query.all()
+    table_last_activity = []
+    for u in user:
+        history = History.query\
+                .filter_by(email = u.email)\
+                .order_by(History.time.desc())\
+                .first()             
+        if history:
+            table_last_activity.append(history)
+    return table_last_activity
 
 @app.route('/')
 def index():
@@ -41,6 +78,21 @@ def index():
         return render_template('index.html', username=session['username'], table_data=new_table_data)
     except:
         return render_template('index.html', username=session['username'])
+
+@app.route('/admin')
+def admin():
+    try:
+        history = History.query.all()
+        df = pd.read_csv(DATA_PATH + 'GLOBAL.csv', header=None)
+        df = df.drop(1, axis=1)
+        table_data = df.values.tolist()
+        new_table_data = []
+        for row in table_data:
+            new_table_data.append([round(row[0],1), round(row[1], 2), float("{:.1f}".format(row[2])), row[3]])
+        last_activitys = last_activity()
+        return render_template('admin.html', table_data=new_table_data, table_history=history, table_last_activity=last_activitys)
+    except:
+        return render_template('admin.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -63,6 +115,8 @@ def login():
             session['isLogged'] = True
             session['username'] = user.name
             session['user_filename'] = user.email+'.csv'
+            session['user_email'] = user.email
+            write_history('login')
             return redirect('/')
 
         # password is wrong
@@ -70,6 +124,7 @@ def login():
 
 @app.route('/logout')
 def logout():
+    write_history('logout')
     session.clear()
     return redirect('/login')
 
@@ -143,8 +198,8 @@ def get_freq():
         ps = request.args.get('ps')
         ps = float(ps)
         
-        # freq = get_frequency('./data/GLOBAL.csv', ps)
-        freq = ps
+        freq = get_frequency('./data/GLOBAL.csv', ps)
+        write_history('get freq')
 
         return {
             'code' : 0,
@@ -184,6 +239,8 @@ def save_new_record():
             f.write(f'{freq}, {col2}, {ps}, {p}, {added_time}')
             f.write("\n")
         
+        write_history('save new record')
+        
         return {
             'code' : 0,
             'msg' : 'Write new line successfully'
@@ -205,6 +262,8 @@ def delete_record():
 
         # need to delete from GLOBAL
 
+        write_history('delete record')
+
         return {
             'code' : 0,
             'msg' : 'deleted'
@@ -217,4 +276,4 @@ def delete_record():
 
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)

@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Cognite</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+        <link rel="stylesheet" href="../assets/index.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    </head>
+
+    <body>
+        <div id="container" class="container-fluid"">
+            <h2 class="text-center">Cognite Neuro</h2>
+            <div class="row">
+                <div class="col-5 data-section">
+                    <h5 class="text-center">Data</h5>
+                    <div class="table-data">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="align-middle">#</th>
+                                    <th scope="col">Personalised Score</th>
+                                    <th scope="col">Suggested Frequency</th>
+                                    <th scope="col" class="align-middle">Performance</th>
+                                    <th scope="col" class="align-middle">Added Time</th>
+                                    <th scope="col" class="align-middle">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody">
+                                {% for row in table_data %}
+                                    <tr>
+                                        <th class="align-middle" scope="row">{{ loop.index0+1 }}</th>
+                                        <td class="align-middle">{{ row[1] }}</td>
+                                        <td class="align-middle">{{ row[0] }}</td>
+                                        <td class="align-middle">{{ row[2] }}</td>
+                                        <td class="align-middle">{{ row[3] }}</td>
+                                        <td class="align-middle">
+                                            <button
+                                                class="button-delete" type="button"
+                                                data-toggle="modal" data-target="#confirmDeleteModal"
+                                                onclick="preDeleteRow('{{ loop.index0+1 }}')">
+                                                Delete
+                                            </button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+    
+                <div class="col-3">
+                    <h5 class="text-center">Welcome, Admin</h5>
+                    <div class="inputs-section">
+                        <div class="input">  
+                            <h5>Personalised Score</h5>
+                            <input id="personalised-score" class="form-control" type="text" placeholder="user's input">
+                            <input id="get-freq-btn" class="form-control btn btn-success" type="button" value="Get Frequency" />
+                        </div>
+                        <div class="input">  
+                            <h5>Suggested Frequency</h5>
+                            <input id="freq" class="form-control" type="text" readonly>
+                        </div>
+                        <div class="input">  
+                            <h5>Performance</h5>
+                            <input id="performance" class="form-control" type="text" placeholder="user's input">
+                        </div>
+                    </div>
+
+                    <div class="save-btn">
+                        <button id="save-record-btn" class="btn btn-success">Save</button>
+                    </div>
+                </div>
+    
+                <div class="col-4 instruction-section">
+                    <h5 class="text-center">Instruction</h5>
+                    <div class="table-data">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th scope="col" class="align-middle">#</th>
+                                    <th scope="col" class="align-middle">Time</th>
+                                    <th scope="col" class="align-middle">User</th>
+                                    <th scope="col" class="align-middle">Event</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody">
+                                {% for row in table_history %}
+                                    <tr>
+                                        <th class="align-middle" scope="row">{{ loop.index0+1 }}</th>
+                                        <td class="align-middle">{{ row.time }}</td>
+                                        <td class="align-middle">{{ row.email }}</td>
+                                        <td class="align-middle">{{ row.event }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div style="position: absolute; top: 0; right: 0;">
+                <button class="btn btn-success" data-toggle="modal" data-target="#lastActivity">Last activity</button>
+            </div>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Confirm delete</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <div class="modal-body">
+                        Are you sure to delete this record?
+                    </div>
+
+                    <div class="modal-footer">
+                        <button id="close-modal-btn" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                        <button id="confirm-delete-btn" type="button" class="btn btn-danger">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Modal Last Activity -->
+        <div class="modal fade" id="lastActivity" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Last activity</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="table-data">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="align-middle">#</th>
+                                        <th scope="col" class="align-middle">Name</th>
+                                        <th scope="col" class="align-middle">Email</th>
+                                        <th scope="col" class="align-middle">Event</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tbody">
+                                    {% for row in table_last_activity %}
+                                        <tr>
+                                            <th class="align-middle" scope="row">{{ loop.index0+1 }}</th>
+                                            <td class="align-middle">{{ row.name }}</td>
+                                            <td class="align-middle">{{ row.email }}</td>
+                                            <td class="align-middle">{{ row.event }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button id="close-modal-btn" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <script src="../assets/index.js"></script>
+    </body>
+</html>
