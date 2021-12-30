@@ -36,8 +36,8 @@ def get_frequency(data_path, personalised_score):
     #plt.colorbar(p3d)
     #fig.savefig("Data_Plot.pdf")
 
-    init_X=data[:,:2]
-    init_Y=data[:,3]
+    init_X=data[:,:2].astype(float)
+    init_Y=data[:,3].astype(float)
     #context_obs=data[:,2]
 
 
@@ -94,7 +94,7 @@ def get_frequency(data_path, personalised_score):
 
 
     bo3d=BayesOpt(gp_params,func_params,acq_params,verbose=1)
-    bo3d.init_with_data(data[:,:3],data[:,3])
+    bo3d.init_with_data(data[:,:3].astype(float),data[:,3].astype(float))
     newinput=bo3d.maximize_condition(personalised_score)
 
 

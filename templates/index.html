@@ -13,7 +13,21 @@
 
     <body>
         <div id="container" class="container-fluid">
-            <h2 class="text-center">Cognite Neuro</h2>
+            <div class="heading">
+                <h2>Cognite Neuro</h2>
+
+                <div id="greeting">
+                    <h5>Welcome, 
+                        <span id="name" class="dropdown-toggle" data-toggle="dropdown">{{ username }}</span>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="/logout">Logout</a>
+                        </div>
+                    </h5>
+                </div>
+                
+                
+            </div>
+            
             <div class="row">
                 <div class="col-5 data-section">
                     <h5 class="text-center">Data</h5>
@@ -53,7 +67,6 @@
                 </div>
     
                 <div class="col-3">
-                    <h5 class="text-center">Welcome, {{ username }}</h5>
                     <div class="inputs-section">
                         <div class="input">  
                             <h5>Personalised Score</h5>
@@ -77,6 +90,8 @@
     
                 <div class="col-4 instruction-section">
                     <h5 class="text-center">Instruction</h5>
+
+                    
                 </div>
             </div>
         </div>

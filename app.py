@@ -21,6 +21,7 @@ class User(db.Model):
     public_id = db.Column(db.String(50), unique = True)
     name = db.Column(db.String(100))
     email = db.Column(db.String(70), unique = True)
+    phoneNumber = db.Column(db.String(15), unique = True)
     password = db.Column(db.String(80))
 
 @app.route('/')
@@ -67,13 +68,18 @@ def login():
         # password is wrong
         return render_template('login.html', message="Wrong password!")
 
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect('/login')
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if request.method == 'GET':
         return render_template('register.html')
     elif request.method == 'POST':
         data = request.form
-        name, email = data.get('name'), data.get('email')
+        name, email, phoneNumber = data.get('name'), data.get('email'), data.get('phoneNumber')
         password, re_password = data.get('password'), data.get('re-password')
 
         if password != re_password:
@@ -91,6 +97,7 @@ def register():
                 public_id = str(uuid.uuid4()),
                 name = name,
                 email = email,
+                phoneNumber = phoneNumber,
                 password = generate_password_hash(password)
             )
             # insert user
@@ -99,6 +106,7 @@ def register():
 
             # create a new csv file for this user
             open(DATA_PATH + email + '.csv', 'x')
+            open(DATA_PATH + email + '_BACKUP.csv', 'x')
             return redirect('/login')
         else:
             return render_template('/register.html', message='User already exists. Please Log in.')
@@ -131,22 +139,12 @@ def load_table():
 
 @app.route('/api/get-freq')
 def get_freq():
-    ps = request.args.get('ps')
-    ps = float(ps)
-    
-    # freq = get_frequency('./data/GLOBAL.csv', ps)
-    freq = ps
-
-    return {
-        'code' : 0,
-        'freq' : freq,
-    }
     try:
         ps = request.args.get('ps')
         ps = float(ps)
         
-        freq = get_frequency('./data/GLOBAL.csv', ps)
-        # freq = ps
+        # freq = get_frequency('./data/GLOBAL.csv', ps)
+        freq = ps
 
         return {
             'code' : 0,
@@ -168,12 +166,21 @@ def save_new_record():
         added_time = request.form['addedTime']
 
         DATA_FILENAME = session['user_filename']
+        DATA_FILENAME_BACKUP = DATA_FILENAME.replace('.csv', '_BACKUP.csv')
 
         with open(DATA_PATH + DATA_FILENAME, 'a') as f:
             f.write(f'{freq}, {col2}, {ps}, {p}, {added_time}')
             f.write("\n")
 
+        with open(DATA_PATH + DATA_FILENAME_BACKUP, 'a') as f:
+            f.write(f'{freq}, {col2}, {ps}, {p}, {added_time}')
+            f.write("\n")
+
         with open(DATA_PATH + 'GLOBAL.csv', 'a') as f:
+            f.write(f'{freq}, {col2}, {ps}, {p}, {added_time}')
+            f.write("\n")
+
+        with open(DATA_PATH + 'GLOBAL_BACKUP.csv', 'a') as f:
             f.write(f'{freq}, {col2}, {ps}, {p}, {added_time}')
             f.write("\n")
         
@@ -195,6 +202,8 @@ def delete_record():
         df = pd.read_csv(DATA_PATH + DATA_FILENAME, header=None)
         df = df.drop(row_id-1, axis=0)
         df.to_csv(DATA_PATH + DATA_FILENAME, header=False, index=False)
+
+        # need to delete from GLOBAL
 
         return {
             'code' : 0,

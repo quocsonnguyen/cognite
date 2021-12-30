@@ -58,7 +58,6 @@ function deleteRow(rowId) {
 }
 
 function preDeleteRow(rowId) {
-    console.log(rowId);
     $('#confirm-delete-btn').removeAttr('onclick');
     $('#confirm-delete-btn').attr('onClick', `deleteRow(${rowId})`);
 }
@@ -67,7 +66,7 @@ $(document).ready(function(){
     $('#get-freq-btn').click(() => {
         let ps = $('#personalised-score').val()
         ps = Number.parseFloat(ps)
-        if (ps) {
+        if (ps > 0) {
             $.ajax({
                 url: '/api/get-freq',
                 type: 'get',

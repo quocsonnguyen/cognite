@@ -2,8 +2,20 @@
     padding-top: 15px;
 }
 
-.greeting {
-    text-align: center;
+.heading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#greeting {
+    position: absolute;
+    display: flex;
+    right: 12px;
+}
+
+#name:hover {
+    cursor: pointer;
 }
 
 .data-section {
@@ -38,7 +50,7 @@ th, td {
 
 .inputs-section {
     padding: 0 30px;
-    margin-top: 50px;
+    margin-top: 30px;
 }
 
 .input {
