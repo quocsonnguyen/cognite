@@ -148,21 +148,24 @@ def register():
             .first()
         if not user:
             # database ORM object
-            user = User(
+            try:
+                user = User(
                 public_id = str(uuid.uuid4()),
                 name = name,
                 email = email,
                 phoneNumber = phoneNumber,
                 password = generate_password_hash(password)
-            )
-            # insert user
-            db.session.add(user)
-            db.session.commit()
+                )
+                # insert user
+                db.session.add(user)
+                db.session.commit()
 
-            # create a new csv file for this user
-            open(DATA_PATH + email + '.csv', 'x')
-            open(DATA_PATH + email + '_BACKUP.csv', 'x')
-            return redirect('/login')
+                # create a new csv file for this user
+                open(DATA_PATH + email + '.csv', 'x')
+                open(DATA_PATH + email + '_BACKUP.csv', 'x')
+                return render_template('registerSuccess.html')
+            except:
+                return render_template('/register.html', message='This phone number is already in use')
         else:
             return render_template('/register.html', message='User already exists. Please Log in.')
 

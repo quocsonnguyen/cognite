@@ -14,6 +14,27 @@
     <body>
         <div id="container" class="container-fluid">
             <div class="heading">
+                <button id="instruction-btn" class="btn btn-success" data-toggle="modal" data-target="#exampleModal">Instruction</button>
+
+                <!-- Modal -->
+                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Instruction</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        </div>
+                        <div class="modal-body">
+                            This is instruction
+                        </div>
+                        <div class="modal-footer">
+                        <button type="button" class="btn btn-success" data-dismiss="modal">Got it</button>
+                        </div>
+                    </div>
+                    </div>
+                </div>
                 <h2>Cognite Neuro</h2>
 
                 <div id="greeting">
@@ -24,12 +45,10 @@
                         </div>
                     </h5>
                 </div>
-                
-                
             </div>
             
             <div class="row">
-                <div class="col-lg-6 col-xl-5 data-section">
+                <div class="col-9 col-lg-8 col-xl-5 data-section">
                     <h5 class="text-center">Data</h5>
                     <div class="table-data">
                         <table class="table table-striped">
@@ -66,7 +85,7 @@
                     </div>
                 </div>
     
-                <div class="col-lg-4 col-xl-3">
+                <div class="col-3 col-lg-4 col-xl-3">
                     <div class="inputs-section">
                         <div class="input">  
                             <h5>Personalised Score</h5>
@@ -88,10 +107,9 @@
                     </div>
                 </div>
     
-                <div class="col-lg-2 col-xl-4 instruction-section">
+                <div class="col-xl-4 instruction-section">
                     <h5 class="text-center">Instruction</h5>
-
-                    
+                    <div>This is instruction</div>
                 </div>
             </div>
         </div>

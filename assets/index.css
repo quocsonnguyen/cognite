@@ -8,10 +8,16 @@
     justify-content: center;
 }
 
+#instruction-btn {
+    position: absolute;
+    display: none;
+    left: 15px; 
+}
+
 #greeting {
     position: absolute;
     display: flex;
-    right: 12px;
+    right: 15px;
 }
 
 #name:hover {
@@ -77,6 +83,16 @@ input {
     border-radius: 5px;
 }
 
-@media screen and (max-width: 1024px) {
-    
-  }
+@media screen and (max-width: 1200px) {
+    #instruction-btn {
+        display: inline; 
+    }
+
+    .inputs-section {
+        padding: 0 0px;
+    }
+
+    .instruction-section {
+        display: none;
+    }
+}
