@@ -1,14 +1,3 @@
-function getTime() {
-    let today  = new Date();
-    let dd = String(today.getDate()).padStart(2, '0');
-    let mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
-    let yyyy = today.getFullYear();
-    let hour = String(today.getHours()).padStart(2, '0');
-    let minute = String(today.getMinutes()).padStart(2, '0')
-    let createdTime = dd + '/' + mm + '/' + yyyy + ' - ' + hour + ':' + minute;
-    return createdTime
-}
-
 function deleteRow(rowId) {
     $('#close-modal-btn').click()
     $.ajax({
@@ -88,7 +77,6 @@ $(document).ready(function(){
         freq = Number.parseFloat(freq)
         ps = Number.parseFloat(ps)
         p = Number.parseFloat(p)
-        addedTime = getTime()
 
         if (freq && ps && p) {
             $.ajax({
@@ -98,8 +86,7 @@ $(document).ready(function(){
                 data: {
                     freq : freq,
                     ps : ps,
-                    p : p,
-                    addedTime : addedTime
+                    p : p
                 }
             }).done(function(result) {
                 console.log(result);
@@ -112,7 +99,7 @@ $(document).ready(function(){
                             <td class="align-middle">${ps.toFixed(2)}</td>
                             <td class="align-middle">${freq.toFixed(1)}</td>
                             <td class="align-middle">${p.toFixed(1)}</td>
-                            <td class="align-middle">${addedTime}</td>
+                            <td class="align-middle">${result.addedTime}</td>
                             <td class="align-middle">
                                 <button 
                                     class="button-delete" type="button" 

@@ -1,6 +1,6 @@
 import os
-import sys
-sys.path.append('./code')
+# import sys
+# sys.path.append('./code')
 
 from flask import Flask, request, session, render_template, redirect
 from flask_sqlalchemy import SQLAlchemy
@@ -8,7 +8,7 @@ from  werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime
 import pandas as pd
 import uuid
-from suggest_new_experiment import get_frequency
+# from suggest_new_experiment import get_frequency
 app = Flask(__name__, template_folder='templates', static_folder='assets')
 app.config['SECRET_KEY'] = 'cognite secret 12/2021'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
@@ -198,7 +198,8 @@ def get_freq():
         ps = request.args.get('ps')
         ps = float(ps)
         
-        freq = get_frequency('./data/GLOBAL.csv', ps)
+        # freq = get_frequency('./data/GLOBAL.csv', ps)
+        freq = ps
         write_history('get freq')
 
         return {
@@ -218,7 +219,8 @@ def save_new_record():
         col2 = 0
         ps = request.form['ps']
         p = request.form['p']
-        added_time = request.form['addedTime']
+        now = datetime.now()
+        added_time = now.strftime("%d/%m/%Y %H:%M:%S")
 
         DATA_FILENAME = session['user_filename']
         DATA_FILENAME_BACKUP = DATA_FILENAME.replace('.csv', '_BACKUP.csv')
@@ -243,7 +245,8 @@ def save_new_record():
         
         return {
             'code' : 0,
-            'msg' : 'Write new line successfully'
+            'msg' : 'Write new line successfully',
+            'addedTime' : added_time
         }
     except:
         return {
@@ -276,4 +279,4 @@ def delete_record():
 
 
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)

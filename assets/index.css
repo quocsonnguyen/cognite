@@ -50,7 +50,6 @@ th, td {
 
 .inputs-section {
     padding: 0 30px;
-    margin-top: 30px;
 }
 
 .input {
@@ -77,3 +76,7 @@ input {
     border: none;
     border-radius: 5px;
 }
+
+@media screen and (max-width: 1024px) {
+    
+  }
