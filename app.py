@@ -32,22 +32,24 @@ class User(db.Model):
     email = db.Column(db.String(70), unique = True)
     phoneNumber = db.Column(db.String(15), unique = True)
     password = db.Column(db.String(80))
+    role = db.Column(db.String(50))
 
 
 
 def write_history(e):
-    now = datetime.now()
-    dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
-    history = History(
-        public_id = str(uuid.uuid4()),
-        email = session['user_email'],
-        name = session['username'],
-        time = dt_string,
-        event = e
-    )
-    # insert user
-    db.session.add(history)
-    db.session.commit()
+    if session['user_role'] == 'user':
+        now = datetime.now()
+        dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
+        history = History(
+            public_id = str(uuid.uuid4()),
+            email = session['user_email'],
+            name = session['username'],
+            time = dt_string,
+            event = e
+        )
+        # insert user
+        db.session.add(history)
+        db.session.commit()
 
 def last_activity():
     user = User.query.all()
@@ -81,18 +83,23 @@ def index():
 
 @app.route('/admin')
 def admin():
-    try:
-        history = History.query.all()
-        df = pd.read_csv(DATA_PATH + 'GLOBAL.csv', header=None)
-        df = df.drop(1, axis=1)
-        table_data = df.values.tolist()
-        new_table_data = []
-        for row in table_data:
-            new_table_data.append([round(row[0],1), round(row[1], 2), float("{:.1f}".format(row[2])), row[3]])
-        last_activitys = last_activity()
-        return render_template('admin.html', table_data=new_table_data, table_history=history, table_last_activity=last_activitys)
-    except:
-        return render_template('admin.html')
+    if 'isLogged' not in session:
+        return redirect('/login')
+    elif session['user_role'] == "admin":
+        try:
+            history = History.query.all()
+            df = pd.read_csv(DATA_PATH + 'GLOBAL.csv', header=None)
+            df = df.drop(1, axis=1)
+            table_data = df.values.tolist()
+            new_table_data = []
+            for row in table_data:
+                new_table_data.append([round(row[0],1), round(row[1], 2), float("{:.1f}".format(row[2])), row[3]])
+            last_activitys = last_activity()
+            return render_template('admin.html', table_data=new_table_data, table_history=history, table_last_activity=last_activitys)
+        except:
+            return render_template('admin.html')
+    else:
+        return redirect('/')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -116,8 +123,12 @@ def login():
             session['username'] = user.name
             session['user_filename'] = user.email+'.csv'
             session['user_email'] = user.email
+            session['user_role'] = user.role
             write_history('login')
-            return redirect('/')
+            if user.role == 'user':
+                return redirect('/')
+            else:
+                return redirect('/admin')
 
         # password is wrong
         return render_template('login.html', message="Wrong password!")
@@ -154,7 +165,8 @@ def register():
                 name = name,
                 email = email,
                 phoneNumber = phoneNumber,
-                password = generate_password_hash(password)
+                password = generate_password_hash(password),
+                role = "user"
                 )
                 # insert user
                 db.session.add(user)
