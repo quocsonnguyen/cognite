@@ -15,7 +15,7 @@ from bayes_opt.visualization import visualization_psy
 from numpy import loadtxt
 
 def get_frequency(data_path, personalised_score):
-    olddata=pd.read_csv(data_path)
+    olddata=pd.read_csv(data_path, names=range(6))
     data=olddata.values
 
     # personalised_score = loadtxt("personalised_score.csv", comments="#", delimiter=",", unpack=False)
