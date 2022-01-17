@@ -1,0 +1,31 @@
+.visualize-input-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.visualize-input {
+    width: 60px;
+}
+.visualize-input-skip {
+    width: 45px;
+}
+
+.estimated-number {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.estimated-input {
+    width: 60px;
+}
+
+.visualize-image-section {
+    overflow-y: scroll;
+    height: 52.3vh;
+}
+
+.visualize-image {
+    width: 100%;
+}

@@ -1,6 +1,8 @@
+from email import message
 import os
-import sys
-sys.path.append('./code')
+import math
+# import sys
+# sys.path.append('./code')
 
 from flask import Flask, request, session, render_template, redirect
 from flask_sqlalchemy import SQLAlchemy
@@ -8,7 +10,7 @@ from  werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, time
 import pandas as pd
 import uuid
-from suggest_new_experiment import get_frequency
+# from suggest_new_experiment import get_frequency
 app = Flask(__name__, template_folder='templates', static_folder='assets')
 app.config['SECRET_KEY'] = 'cognite secret 12/2021'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
@@ -91,7 +93,10 @@ def admin():
             table_data = df.values.tolist()
             new_table_data = []
             for row in table_data:
-                new_table_data.append([round(row[0],1), round(row[1], 2), float("{:.1f}".format(row[2])), row[3]])
+                if isinstance(row[4], str):
+                    new_table_data.append([round(row[0],1), round(row[1], 2), float("{:.1f}".format(row[2])), row[3], row[4]])
+                else:
+                    new_table_data.append([round(row[0],1), round(row[1], 2), float("{:.1f}".format(row[2])), row[3], '-'])
             last_activitys = last_activity()
             return render_template('admin.html', table_data=new_table_data, table_history=history, table_last_activity=last_activitys)
         except:
@@ -161,12 +166,12 @@ def register():
             # database ORM object
             try:
                 user = User(
-                public_id = str(uuid.uuid4()),
-                name = name,
-                email = email,
-                phoneNumber = phoneNumber,
-                password = generate_password_hash(password),
-                role = "user"
+                    public_id = str(uuid.uuid4()),
+                    name = name,
+                    email = email,
+                    phoneNumber = phoneNumber,
+                    password = generate_password_hash(password),
+                    role = "user"
                 )
                 # insert user
                 db.session.add(user)
@@ -175,7 +180,14 @@ def register():
                 # create a new csv file for this user
                 open(DATA_PATH + email + '.csv', 'x')
                 open(DATA_PATH + email + '_BACKUP.csv', 'x')
-                return render_template('registerSuccess.html')
+                ## new code for 14 january update
+                session['isLogged'] = True
+                session['username'] = name
+                session['user_filename'] = email + '.csv'
+                session['user_email'] = email
+                session['user_role'] = 'user'
+                write_history('login')
+                return redirect('/')
             except:
                 return render_template('/register.html', message='This phone number is already in use')
         else:
@@ -216,7 +228,38 @@ def load_global_table():
             table_data = df.values.tolist()
             new_table_data = []
             for row in table_data:
-                new_table_data.append([round(row[0],1), round(row[1], 2), float("{:.1f}".format(row[2])), row[3]])
+                if isinstance(row[4], str):
+                    new_table_data.append([round(row[0],1), round(row[1], 2), float("{:.1f}".format(row[2])), row[3], row[4]])
+                else:
+                    new_table_data.append([round(row[0],1), round(row[1], 2), float("{:.1f}".format(row[2])), row[3], '-'])
+            return {
+                'code' : 0,
+                'data' : new_table_data
+            }
+        except:
+            return {
+                'code' : 1,
+                'msg' : 'Table is empty'
+            }
+    except:
+        return {
+            'code' : 2,
+            'msg' : 'Load table failed'
+        }
+
+@app.route('/api/load-global-backup-table')
+def load_global_backup_table():
+    try:
+        try:
+            df = pd.read_csv(DATA_PATH + 'GLOBAL_BACKUP.csv', header=None, names=range(6))
+            df = df.drop(1, axis=1)
+            table_data = df.values.tolist()
+            new_table_data = []
+            for row in table_data:
+                if isinstance(row[4], str):
+                    new_table_data.append([round(row[0],1), round(row[1], 2), float("{:.1f}".format(row[2])), row[3], row[4]])
+                else:
+                    new_table_data.append([round(row[0],1), round(row[1], 2), float("{:.1f}".format(row[2])), row[3], '-'])
             return {
                 'code' : 0,
                 'data' : new_table_data
@@ -238,12 +281,12 @@ def get_freq():
         ps = request.args.get('ps')
         ps = float(ps)
         
-        freq = get_frequency(DATA_PATH + 'GLOBAL.csv', ps)
+        # freq = get_frequency(DATA_PATH + 'GLOBAL.csv', ps)
         write_history('get freq')
 
         return {
             'code' : 0,
-            'freq' : freq,
+            'freq' : ps,
         }
     except:
         return {
@@ -312,7 +355,7 @@ def delete_record():
 
         # need to delete from GLOBAL
         user_email = session['user_email']
-        time_added = row_data.iloc[4]
+        time_added = row_data[4]
 
         with open(DATA_PATH + "GLOBAL.csv", "r+") as f:
             lines = f.readlines()
@@ -349,8 +392,25 @@ def delete_record_in_global():
     try:
         row_id = int(request.form['rowId'])
         df = pd.read_csv(DATA_PATH + 'GLOBAL.csv', header=None, names=range(6))
+        row_data = df.iloc[row_id-1]
         df = df.drop(row_id-1, axis=0)
         df.to_csv(DATA_PATH + 'GLOBAL.csv', header=False, index=False)
+
+        if not isinstance(row_data[5], float):
+            time_added = row_data[4].replace(' ', '')
+            user_email = row_data[5].replace(' ', '')
+
+            with open(DATA_PATH + user_email + ".csv", "r+") as f:
+                lines = f.readlines()
+                f.seek(0)
+                for line in lines:
+                    tokens = line.split(',')
+                    try:
+                        if tokens[4].replace(' ', '').strip() != time_added:
+                            f.write(line)
+                    except:
+                        f.write(line)
+                f.truncate()
 
         return {
             'code' : 0,
@@ -362,5 +422,28 @@ def delete_record_in_global():
             'msg' : 'Can not delete'
         }
 
+@app.route('/forget-password', methods=['GET', 'POST'])
+def forget_password():
+    if request.method == 'GET':
+        return render_template('forgetPassword.html')
+    if request.method == 'POST':
+        data = request.form
+        email, phoneNumber = data.get('email'), data.get('phoneNumber')
+        user = User.query\
+            .filter_by(email = email)\
+            .first()
+
+        if not user:
+            return render_template('forgetPassword.html', message='User does not exist!')
+
+        if user.phoneNumber != phoneNumber:
+            return render_template('forgetPassword.html', message='Wrong phone number for this user!')
+
+        # update this user
+        user.password = generate_password_hash(user.email)
+        db.session.commit()
+        write_history('recover password')
+        return render_template('successMessage.html', message="Congratulations, your password has been reset to your email.")
+        
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=True)

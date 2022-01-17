@@ -6,6 +6,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
         <link rel="stylesheet" href="../assets/index.css">
+        <link rel="stylesheet" href="../assets/admin.css">
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -13,24 +14,27 @@
 
     <body>
         <div id="container" class="container-fluid">
-            <h2 class="text-center">Cognite Neuro</h2>
-            <div style="position: absolute; top: 0; right: 0;">
+            
+            <div style="display: flex; align-items: center; justify-content: space-between;">
+                <button id="switch-btn" class="btn btn-success">Switch to GLOBAL BACKUP file</button>
+                <input id="current-table" type="hidden" value="global">
+                <h2 class="text-center">Cognite Neuro</h2>
                 <button class="btn btn-success" data-toggle="modal" data-target="#lastActivity">Last activity</button>
             </div>
+
             <div class="row">
                 <div class="col-5 data-section">
                     <h5 class="text-center">Data</h5>
                     <div class="table-data">
                         <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th scope="col" class="align-middle">#</th>
-                                    <th scope="col">Personalised Score</th>
-                                    <th scope="col">Suggested Frequency</th>
-                                    <th scope="col" class="align-middle">Performance</th>
-                                    <th scope="col" class="align-middle">Added Time</th>
-                                    <th scope="col" class="align-middle">Action</th>
-                                </tr>
+                            <thead id="thead">
+                                <th scope="col" class="align-middle">#</th>
+                                <th scope="col">Personalised Score</th>
+                                <th scope="col">Current Intensity</th>
+                                <th scope="col" class="align-middle">Performance</th>
+                                <th scope="col" class="align-middle">Added Time</th>
+                                <th scope="col" class="align-middle">User</th>
+                                <th scope="col" class="align-middle">Action</th>
                             </thead>
                             <tbody id="tbody">
                                 {% for row in table_data %}
@@ -40,6 +44,7 @@
                                         <td class="align-middle">{{ row[0] }}</td>
                                         <td class="align-middle">{{ row[2] }}</td>
                                         <td class="align-middle">{{ row[3] }}</td>
+                                        <td class="align-middle">{{ row[4] }}</td>
                                         <td class="align-middle">
                                             <button
                                                 class="button-delete" type="button"
@@ -57,25 +62,45 @@
     
                 <div class="col-3">
                     <h5 class="text-center">Visualization</h5>
-                    <!-- <div class="inputs-section">
-                        <div class="input">  
-                            <h5>Personalised Score</h5>
-                            <input id="personalised-score" class="form-control" type="text" placeholder="user's input">
-                            <input id="get-freq-btn" class="form-control btn btn-success" type="button" value="Get Frequency" />
-                        </div>
-                        <div class="input">  
-                            <h5>Suggested Frequency</h5>
-                            <input id="freq" class="form-control" type="text" readonly>
-                        </div>
-                        <div class="input">  
-                            <h5>Performance</h5>
-                            <input id="performance" class="form-control" type="text" placeholder="user's input">
+
+                    <div class="visualize-input-section">
+                        From index: <input class="visualize-input form-control" type="text">
+                        To index: <input class="visualize-input form-control" type="text">
+                        Skip: <input class="visualize-input-skip form-control" type="text">
+                    </div>
+
+                    <div style="margin-top: 10px;" class="text-center">
+                        <button class="btn btn-success">Visualize</button>
+                    </div>
+
+                    <hr>
+
+                    <div class="estimated-section">
+                        <h6 class="text-center">Estimated</h4>
+
+                        <div class="estimated-number">
+                            <div>
+                                <div class="text-center"><b>A</b></div>
+                                <input class="estimated-input form-control" type="text" disabled>
+                            </div>
+                            <div>
+                                <div class="text-center"><b>B</b></div>
+                                <input class="estimated-input form-control" type="text" disabled>
+                            </div>
+                            <div>
+                                <div class="text-center"><b>C</b></div>
+                                <input class="estimated-input form-control" type="text" disabled>
+                            </div>
                         </div>
                     </div>
 
-                    <div class="save-btn">
-                        <button id="save-record-btn" class="btn btn-success">Save</button>
-                    </div> -->
+                    <hr>
+
+                    <div class="visualize-image-section">
+                        <div style="margin-top: 10px;"><img class="visualize-image" src="https://media.istockphoto.com/photos/feline-picture-id108226626?k=20&m=108226626&s=612x612&w=0&h=bDaWwxhcygjerdR71qQu8YFSXaDUIi_HUZV2AADg5L8=" alt="img-1"></div>
+                        <div style="margin-top: 10px;"><img class="visualize-image" src="https://media.istockphoto.com/photos/feline-picture-id108226626?k=20&m=108226626&s=612x612&w=0&h=bDaWwxhcygjerdR71qQu8YFSXaDUIi_HUZV2AADg5L8=" alt="img-2"></div>
+                        <div style="margin-top: 10px;"><img class="visualize-image" src="https://media.istockphoto.com/photos/feline-picture-id108226626?k=20&m=108226626&s=612x612&w=0&h=bDaWwxhcygjerdR71qQu8YFSXaDUIi_HUZV2AADg5L8=" alt="img-3"></div>
+                    </div>
                 </div>
     
                 <div class="col-4 instruction-section">
@@ -83,12 +108,10 @@
                     <div class="table-data">
                         <table class="table table-striped">
                             <thead>
-                                <tr>
-                                    <th scope="col" class="align-middle">#</th>
-                                    <th scope="col" class="align-middle">Time</th>
-                                    <th scope="col" class="align-middle">User</th>
-                                    <th scope="col" class="align-middle">Event</th>
-                                </tr>
+                                <th scope="col" class="align-middle">#</th>
+                                <th scope="col" class="align-middle">Time</th>
+                                <th scope="col" class="align-middle">User</th>
+                                <th scope="col" class="align-middle">Event</th>
                             </thead>
                             <tbody id="tbody">
                                 {% for row in table_history %}
@@ -143,12 +166,11 @@
                         <div class="table-data">
                             <table class="table table-striped">
                                 <thead>
-                                    <tr>
-                                        <th scope="col" class="align-middle">#</th>
-                                        <th scope="col" class="align-middle">Name</th>
-                                        <th scope="col" class="align-middle">Email</th>
-                                        <th scope="col" class="align-middle">Event</th>
-                                    </tr>
+                                    <th scope="col" class="align-middle">#</th>
+                                    <th scope="col" class="align-middle">Name</th>
+                                    <th scope="col" class="align-middle">Email</th>
+                                    <th scope="col" class="align-middle">Event</th>
+                                    <th scope="col" class="align-middle">Time</th>
                                 </thead>
                                 <tbody id="tbody">
                                     {% for row in table_last_activity %}
@@ -157,6 +179,7 @@
                                             <td class="align-middle">{{ row.name }}</td>
                                             <td class="align-middle">{{ row.email }}</td>
                                             <td class="align-middle">{{ row.event }}</td>
+                                            <td class="align-middle">{{ row.time }}</td>
                                         </tr>
                                     {% endfor %}
                                 </tbody>

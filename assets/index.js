@@ -12,12 +12,12 @@ function deleteRow(rowId) {
                 url: '/api/load-table',
                 type: 'get'
             }).done(result => {
-                console.log(result);
                 if (result.code === 0) {
                     // Render table
                     let tbody = $('#tbody')
                     tbody.empty()
                     for (let i = 0; i <= result.data.length; i++) {
+                        if (result.data[i] === undefined) { continue }
                         let tr = document.createElement('tr')
                         tr.innerHTML = `
                             <tr>
@@ -78,7 +78,7 @@ $(document).ready(function(){
         ps = Number.parseFloat(ps)
         p = Number.parseFloat(p)
 
-        if (freq && ps && p) {
+        if (freq && ps && p && p >= 0) {
             $.ajax({
                 url: '/api/save-new-record',
                 type: 'post',
