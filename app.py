@@ -1,16 +1,19 @@
 from email import message
 import os
 import math
-# import sys
-# sys.path.append('./code')
 
-from flask import Flask, request, session, render_template, redirect
+import sys
+sys.path.append('./code')
+from suggest_new_experiment import get_frequency
+from visualization_current_intensity_personalised_score_performance import visualize
+
+from flask import Flask, request, session, render_template, redirect, send_file
 from flask_sqlalchemy import SQLAlchemy
 from  werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, time
 import pandas as pd
 import uuid
-# from suggest_new_experiment import get_frequency
+
 app = Flask(__name__, template_folder='templates', static_folder='assets')
 app.config['SECRET_KEY'] = 'cognite secret 12/2021'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
@@ -281,12 +284,12 @@ def get_freq():
         ps = request.args.get('ps')
         ps = float(ps)
         
-        # freq = get_frequency(DATA_PATH + 'GLOBAL.csv', ps)
+        freq = get_frequency(DATA_PATH + 'GLOBAL.csv', ps)
         write_history('get freq')
 
         return {
             'code' : 0,
-            'freq' : ps,
+            'freq' : freq,
         }
     except:
         return {
@@ -445,5 +448,22 @@ def forget_password():
         write_history('recover password')
         return render_template('successMessage.html', message="Congratulations, your password has been reset to your email.")
         
+@app.route('/api/visualize')
+def visualize_data():
+    from_index = int(request.args.get('fromIndex')) - 1
+    to_index = int(request.args.get('toIndex'))
+    skip = int(request.args.get('skip'))
+
+    data = visualize(DATA_PATH + 'GLOBAL.csv', from_index, to_index, skip)
+
+    return {
+        'code' : 0,
+        'data' : data
+    }
+
+@app.route('/api/image/<string:image_name>/<string:date>')
+def get_image(image_name,date):
+    return send_file(image_name, mimetype='image/gif')
+
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(debug=False)

@@ -24,7 +24,7 @@
 
             <div class="row">
                 <div class="col-5 data-section">
-                    <h5 class="text-center">Data</h5>
+                    <h5 id="type-of-data" class="text-center">GLOBAL Data</h5>
                     <div class="table-data">
                         <table class="table table-striped">
                             <thead id="thead">
@@ -64,32 +64,42 @@
                     <h5 class="text-center">Visualization</h5>
 
                     <div class="visualize-input-section">
-                        From index: <input class="visualize-input form-control" type="text">
-                        To index: <input class="visualize-input form-control" type="text">
-                        Skip: <input class="visualize-input-skip form-control" type="text">
+                        From index: <input id="from-i" class="visualize-input form-control" type="text">
+                        To index: <input id="to-i" class="visualize-input form-control" type="text">
+                        Skip: <input id="skip" class="visualize-input-skip form-control" type="text">
                     </div>
 
                     <div style="margin-top: 10px;" class="text-center">
-                        <button class="btn btn-success">Visualize</button>
+                        <button id="v-btn" class="btn btn-success">Visualize</button>
                     </div>
 
                     <hr>
 
                     <div class="estimated-section">
-                        <h6 class="text-center">Estimated</h4>
+                        <p class="text-center"><b>Estimated Hyperparameter</b></p>
 
-                        <div class="estimated-number">
-                            <div>
-                                <div class="text-center"><b>A</b></div>
-                                <input class="estimated-input form-control" type="text" disabled>
+                        <div class="row estimated-number">
+                            <div class="row e-label-section">
+                                <div class="col-4">
+                                    <div class="e-label text-center"><b>Current Intensity lengthscale</b></div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="e-label text-center"><b>Personalised Score lengthscale</b></div>
+                                </div>
+                                <div class="col-4">
+                                    <div class="e-label text-center"><b>Noise Variance</b></div>
+                                </div>
                             </div>
-                            <div>
-                                <div class="text-center"><b>B</b></div>
-                                <input class="estimated-input form-control" type="text" disabled>
-                            </div>
-                            <div>
-                                <div class="text-center"><b>C</b></div>
-                                <input class="estimated-input form-control" type="text" disabled>
+                            <div style="width: 110%;" class="row">
+                                <div class="col-4">
+                                    <input id="current-intensity-inp" class="estimated-input form-control m-auto" type="text" disabled>
+                                </div>
+                                <div class="col-4">
+                                    <input id="p-score-inp" class="estimated-input form-control m-auto" type="text" disabled>
+                                </div>
+                                <div class="col-4">
+                                    <input id="noise-inp" class="estimated-input form-control m-auto" type="text" disabled>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -97,9 +107,15 @@
                     <hr>
 
                     <div class="visualize-image-section">
-                        <div style="margin-top: 10px;"><img class="visualize-image" src="https://media.istockphoto.com/photos/feline-picture-id108226626?k=20&m=108226626&s=612x612&w=0&h=bDaWwxhcygjerdR71qQu8YFSXaDUIi_HUZV2AADg5L8=" alt="img-1"></div>
-                        <div style="margin-top: 10px;"><img class="visualize-image" src="https://media.istockphoto.com/photos/feline-picture-id108226626?k=20&m=108226626&s=612x612&w=0&h=bDaWwxhcygjerdR71qQu8YFSXaDUIi_HUZV2AADg5L8=" alt="img-2"></div>
-                        <div style="margin-top: 10px;"><img class="visualize-image" src="https://media.istockphoto.com/photos/feline-picture-id108226626?k=20&m=108226626&s=612x612&w=0&h=bDaWwxhcygjerdR71qQu8YFSXaDUIi_HUZV2AADg5L8=" alt="img-3"></div>
+                        <div style="margin-top: 10px;">
+                            <img id="v-img-1" class="visualize-image" src="/api/image/gp_acq.png/1" alt="img-1">
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <img id="v-img-2" class="visualize-image" src="/api/image/gp_mean.png/2" alt="img-2">
+                        </div>
+                        <div style="margin-top: 10px;">
+                            <img id="v-img-3" class="visualize-image" src="/api/image/gp_var.png/3" alt="img-3">
+                        </div>
                     </div>
                 </div>
     

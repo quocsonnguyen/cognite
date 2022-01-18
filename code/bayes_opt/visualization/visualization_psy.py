@@ -1086,17 +1086,17 @@ def plot_bo_2d_withGPmeans_condition(bo,ability_org,newinput=[]):
     return X_ori, mu_original
     
     
-def plot_bo_2d_withGPmeans_Sigma(bo):
+def plot_bo_2d_withGPmeans_Sigma(bo,myxlabel="",myylabel=""):
     
-    x1 = np.linspace(bo.scalebounds[0,0], bo.scalebounds[0,1], 100)
-    x2 = np.linspace(bo.scalebounds[1,0], bo.scalebounds[1,1], 100)
+    x1 = np.linspace(bo.scalebounds[0,0], bo.scalebounds[0,1], 60)
+    x2 = np.linspace(bo.scalebounds[1,0], bo.scalebounds[1,1], 60)
     
     x1g,x2g=np.meshgrid(x1,x2)
     
     X=np.c_[x1g.flatten(), x2g.flatten()]
     
-    x1_ori = np.linspace(bo.bounds[0,0], bo.bounds[0,1], 100)
-    x2_ori = np.linspace(bo.bounds[1,0], bo.bounds[1,1], 100)
+    x1_ori = np.linspace(bo.bounds[0,0], bo.bounds[0,1], 60)
+    x2_ori = np.linspace(bo.bounds[1,0], bo.bounds[1,1], 60)
     
     x1g_ori,x2g_ori=np.meshgrid(x1_ori,x2_ori)
     
@@ -1104,12 +1104,13 @@ def plot_bo_2d_withGPmeans_Sigma(bo):
     
     #fig.suptitle('Gaussian Process and Utility Function After {} Points'.format(len(bo.X)), fontdict={'size':18})
     
-    fig = plt.figure(figsize=(12, 3))
-    
+    #fig = plt.figure(figsize=(12, 3))
+    fig = plt.figure(figsize=(6, 5))
+
     #axis3d = fig.add_subplot(1, 2, 1, projection='3d')
-    axis2d = fig.add_subplot(1, 2, 1)
+    axis2d = fig.add_subplot(1, 1, 1)
     #acq3d = fig.add_subplot(2, 2, 3, projection='3d')
-    acq2d = fig.add_subplot(1, 2, 2)
+    #acq2d = fig.add_subplot(1, 2, 2)
     
     mu, sigma = bo.posterior(X)
     #axis.plot(x, y, linewidth=3, label='Target')
@@ -1118,14 +1119,31 @@ def plot_bo_2d_withGPmeans_Sigma(bo):
 
     utility = bo.acq_func.acq_kind(X, bo.gp)
 
-    CS=axis2d.contourf(x1g_ori,x2g_ori,mu.reshape(x1g.shape),cmap=plt.cm.bone,origin='lower')
+    #CS=axis2d.contourf(x1g_ori,x2g_ori,mu.reshape(x1g.shape),cmap=plt.cm.bone,origin='lower')
+    CS=axis2d.contourf(x1g_ori,x2g_ori,mu.reshape(x1g.shape),cmap=my_cmap,origin='lower')
     #CS2 = plt.contour(CS, levels=CS.levels[::2],colors='r',origin='lower',hold='on')
     
-    axis2d.scatter(bo.X_original[:,0],bo.X_original[:,1], label=u'Observations', color='g')    
-    axis2d.set_title('Gaussian Process Mean',fontsize=16)
+    axis2d.scatter(bo.X_original[:,0],bo.X_original[:,1], label=u'Observations', color='g')   
+    
+    mu=mu.reshape(x1g.shape)
+    idxMax=np.argmax(mu,axis=1)
+
+    axis2d.scatter(x1_ori[idxMax],x2_ori, label=u'Max by Y-axis', color='r',marker='x',s=25)    
+
+
+
+    axis2d.set_title('GP Predictive Mean',fontsize=16)
+    axis2d.set_xlabel(myxlabel,fontsize=14)
+    axis2d.set_ylabel(myylabel,fontsize=14)
     axis2d.set_xlim(bo.bounds[0,0], bo.bounds[0,1])
     axis2d.set_ylim(bo.bounds[1,0], bo.bounds[1,1])
+    axis2d.legend()
+
     fig.colorbar(CS, ax=axis2d, shrink=0.9)
+    fig.savefig("gp_mean.png",dpi=600)
+
+    fig = plt.figure(figsize=(6, 5))
+    acq2d = fig.add_subplot(1, 1, 1)
 
     
     #CS_acq=acq2d.contourf(x1g_ori,x2g_ori,utility.reshape(x1g.shape),cmap=plt.cm.bone,origin='lower')
@@ -1138,17 +1156,80 @@ def plot_bo_2d_withGPmeans_Sigma(bo):
     acq2d.scatter(bo.X_original[:,0],bo.X_original[:,1],color='g')  
     
         
-    acq2d.scatter(bo.X_original[-1,0],bo.X_original[-1,1],color='r',s=60)
-    acq2d.scatter(X_ori[idxBest,0],X_ori[idxBest,1],color='b',s=60)
+    #acq2d.scatter(bo.X_original[-1,0],bo.X_original[-1,1],color='r',s=60)
+    #acq2d.scatter(X_ori[idxBest,0],X_ori[idxBest,1],color='b',s=60)
     
     
-    acq2d.set_title('Gaussian Process Variance',fontsize=16)
+    acq2d.set_title('GP Predictive Variance',fontsize=16)
+    acq2d.set_xlabel(myxlabel,fontsize=14)
+    acq2d.set_ylabel(myylabel,fontsize=14)
+    acq2d.set_xlim(bo.bounds[0,0], bo.bounds[0,1])
+    acq2d.set_ylim(bo.bounds[1,0], bo.bounds[1,1])
     #acq2d.set_xlim(bo.bounds[0,0]-0.2, bo.bounds[0,1]+0.2)
     #acq2d.set_ylim(bo.bounds[1,0]-0.2, bo.bounds[1,1]+0.2)
              
     
     fig.colorbar(CS_acq, ax=acq2d, shrink=0.9)
-  
+    fig.savefig("gp_var.png",dpi=600)
+
+
+def plot_2d_Acq_by_Personalisedscore(bo,myxlabel="",myylabel=""):
+    
+    x1 = np.linspace(bo.scalebounds[0,0], bo.scalebounds[0,1], 60)
+    x2 = np.linspace(bo.scalebounds[1,0], bo.scalebounds[1,1], 60)
+    
+    x1g,x2g=np.meshgrid(x1,x2)
+    
+    X=np.c_[x1g.flatten(), x2g.flatten()]
+    
+    x1_ori = np.linspace(bo.bounds[0,0], bo.bounds[0,1], 60)
+    x2_ori = np.linspace(bo.bounds[1,0], bo.bounds[1,1], 60)
+    
+    x1g_ori,x2g_ori=np.meshgrid(x1_ori,x2_ori)
+    
+    X_ori=np.c_[x1g_ori.flatten(), x2g_ori.flatten()]
+    
+    #fig.suptitle('Gaussian Process and Utility Function After {} Points'.format(len(bo.X)), fontdict={'size':18})
+    
+    #fig = plt.figure(figsize=(12, 3))
+    fig = plt.figure(figsize=(6, 5))
+
+    #axis3d = fig.add_subplot(1, 2, 1, projection='3d')
+    axis2d = fig.add_subplot(1, 1, 1)
+    #acq3d = fig.add_subplot(2, 2, 3, projection='3d')
+    #acq2d = fig.add_subplot(1, 2, 2)
+    
+    mu, sigma = bo.posterior(X)
+    
+    
+    #axis.plot(x, y, linewidth=3, label='Target')
+    #axis3d.plot_surface(x1g,x1g,mu.reshape(x1g.shape))
+    #axis3d.scatter(bo.X[:,0],bo.X[:,1], bo.Y,zdir='z',  label=u'Observations', color='r')    
+
+    utility = bo.acq_func.acq_kind(X, bo.gp)
+    
+    utility=utility.reshape(x1g.shape)
+    
+    idxMax=np.argmax(utility,axis=1)
+
+    #CS=axis2d.contourf(x1g_ori,x2g_ori,mu.reshape(x1g.shape),cmap=plt.cm.bone,origin='lower')
+    CS=axis2d.contourf(x1g_ori,x2g_ori,utility,cmap=my_cmap,origin='lower')
+    #CS2 = plt.contour(CS, levels=CS.levels[::2],colors='r',origin='lower',hold='on')
+    
+    axis2d.scatter(bo.X_original[:,0],bo.X_original[:,1], label=u'Obs', color='g')    
+    
+    
+    axis2d.scatter(x1_ori[idxMax],x2_ori, label=u'Max by Y-axis', color='r',marker='x',s=25)    
+    
+    axis2d.set_title('GP UCB',fontsize=16)
+    axis2d.set_xlabel(myxlabel,fontsize=14)
+    axis2d.set_ylabel(myylabel,fontsize=14)
+    axis2d.set_xlim(bo.bounds[0,0], bo.bounds[0,1])
+    axis2d.set_ylim(bo.bounds[1,0], bo.bounds[1,1])
+    axis2d.legend()
+    fig.colorbar(CS, ax=axis2d, shrink=0.9)
+    fig.savefig("gp_acq.png",dpi=600)
+
 
     
 def show_optimization_progress(bo):

@@ -89,6 +89,7 @@ $(document).ready(function () {
                         `
                         tbody.append(tr)
                         $('#current-table').val('global_backup')
+                        $('#type-of-data').text('GLOBAL BACKUP Data')
                         $('#switch-btn').text('Switch to GLOBAL file')
                     }
                 } else {
@@ -138,12 +139,44 @@ $(document).ready(function () {
                         `
                         tbody.append(tr)
                         $('#current-table').val('global')
+                        $('#type-of-data').text('GLOBAL Data')
                         $('#switch-btn').text('Switch to GLOBAL BACKUP file')
                     }
                 } else {
                     $('#tbody').empty()
                 }
             })
+        }
+    })
+
+    $('#v-btn').click(function () {
+        let fromIndex = $('#from-i').val()
+        let toIndex = $('#to-i').val()
+        let skip = $('#skip').val()
+
+        if (fromIndex && toIndex && skip && fromIndex > 0 && skip > 0) {
+            if (toIndex > fromIndex || toIndex==-1) {
+                $.ajax({
+                    url: '/api/visualize',
+                    type: 'get',
+                    data : {
+                        fromIndex : fromIndex,
+                        toIndex : toIndex,
+                        skip: skip
+                    }
+                }).done(result => {
+                    if (result.code === 0) {
+                        $('#current-intensity-inp').val(Number.parseFloat(result.data.currentIntensity).toFixed(1))
+                        $('#p-score-inp').val(Number.parseFloat(result.data.personalisedScore).toFixed(2))
+                        $('#noise-inp').val(result.data.noise)
+                        $('#v-img-1').attr('src', '/api/image/gp_acq.png/' + Date.now())
+                        $('#v-img-2').attr('src', '/api/image/gp_mean.png/' + Date.now())
+                        $('#v-img-3').attr('src', '/api/image/gp_var.png/' + Date.now())
+                    } else {
+                        console.log('failed');
+                    }
+                })
+            }
         }
     })
 })
