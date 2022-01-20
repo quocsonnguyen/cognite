@@ -157,10 +157,10 @@ def register():
         password, re_password = data.get('password'), data.get('re-password')
 
         if password != re_password:
-            return render_template('/register.html', message='Confirm password does not match password!')
+            return render_template('register.html', message='Confirm password does not match password!')
 
         if len(password) < 8:
-            return render_template('/register.html', message='Password must have at least 8 letters!')
+            return render_template('register.html', message='Password must have at least 8 letters!')
 
         user = User.query\
             .filter_by(email = email)\
@@ -192,12 +192,17 @@ def register():
                 write_history('login')
                 return redirect('/')
             except:
-                return render_template('/register.html', message='This phone number is already in use')
+                return render_template('register.html', message='This phone number is already in use')
         else:
-            return render_template('/register.html', message='User already exists. Please Log in.')
+            return render_template('register.html', message='User already exists. Please Log in.')
 
 @app.route('/api/load-table')
 def load_table():
+    if 'isLogged' not in session:
+        return {
+            'code' : 5,
+            'msg' : 'You do not have permission'
+        }
     try:
         DATA_FILENAME = session['user_filename']
         try:
@@ -224,6 +229,11 @@ def load_table():
 
 @app.route('/api/load-global-table')
 def load_global_table():
+    if 'isLogged' not in session:
+        return {
+            'code' : 5,
+            'msg' : 'You do not have permission'
+        }
     try:
         try:
             df = pd.read_csv(DATA_PATH + 'GLOBAL.csv', header=None, names=range(6))
@@ -252,6 +262,11 @@ def load_global_table():
 
 @app.route('/api/load-global-backup-table')
 def load_global_backup_table():
+    if 'isLogged' not in session:
+        return {
+            'code' : 5,
+            'msg' : 'You do not have permission'
+        }
     try:
         try:
             df = pd.read_csv(DATA_PATH + 'GLOBAL_BACKUP.csv', header=None, names=range(6))
@@ -280,6 +295,11 @@ def load_global_backup_table():
 
 @app.route('/api/get-freq')
 def get_freq():
+    if 'isLogged' not in session:
+        return {
+            'code' : 5,
+            'msg' : 'You do not have permission'
+        }
     try:
         ps = request.args.get('ps')
         ps = float(ps)
@@ -299,6 +319,11 @@ def get_freq():
 
 @app.route('/api/save-new-record', methods=['POST'])
 def save_new_record():
+    if 'isLogged' not in session:
+        return {
+            'code' : 5,
+            'msg' : 'You do not have permission'
+        }
     try:
         freq = request.form['freq']
         col2 = 0
@@ -445,11 +470,17 @@ def forget_password():
         # update this user
         user.password = generate_password_hash(user.email)
         db.session.commit()
-        write_history('recover password')
-        return render_template('successMessage.html', message="Congratulations, your password has been reset to your email.")
+        return render_template('successMessage.html',
+            message="Congratulations, your password has been reset to your email.",
+            back_to_login=True)
         
 @app.route('/api/visualize')
 def visualize_data():
+    if 'isLogged' not in session:
+        return {
+            'code' : 5,
+            'msg' : 'You do not have permission'
+        }
     from_index = int(request.args.get('fromIndex')) - 1
     to_index = int(request.args.get('toIndex'))
     skip = int(request.args.get('skip'))
@@ -463,7 +494,47 @@ def visualize_data():
 
 @app.route('/api/image/<string:image_name>/<string:date>')
 def get_image(image_name,date):
+    if 'isLogged' not in session:
+        return {
+            'code' : 5,
+            'msg' : 'You do not have permission'
+        }
     return send_file(image_name, mimetype='image/gif')
 
+@app.route('/change-password', methods=['GET', 'POST'])
+def change_password():
+    if 'isLogged' not in session:
+        return {
+            'code' : 5,
+            'msg' : 'You do not have permission'
+        }
+    
+    if request.method == 'GET':
+        return render_template('changePassword.html')
+    
+    if request.method == 'POST':
+        user_email = session['user_email']
+        data = request.form
+        current_password = data.get('current-password')
+        new_password, reconfirm_new_password = data.get('new-password'), data.get('reconfirm-new-password')
+
+        if new_password != reconfirm_new_password:
+            return render_template('changePassword.html', message='Confirm new password does not match new password!')
+
+        if len(new_password) < 8:
+            return render_template('changePassword.html', message='New password must have at least 8 letters!')
+
+        user = User.query\
+            .filter_by(email = user_email)\
+            .first()
+
+        if not check_password_hash(user.password, current_password):
+            return render_template('changePassword.html', message='Wrong current password!')
+
+        user.password = generate_password_hash(new_password)
+        db.session.commit()
+        return render_template('successMessage.html',
+            message="Congratulations, your password has been changed.")
+
 if __name__ == '__main__':
-    app.run(debug=False)
+    app.run(debug=False, host='0.0.0.0', port=8080)

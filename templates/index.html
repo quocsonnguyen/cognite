@@ -14,10 +14,10 @@
     <body>
         <div id="container" class="container-fluid">
             <div class="heading">
-                <button id="instruction-btn" class="btn btn-success" data-toggle="modal" data-target="#exampleModal">Instruction</button>
+                <button id="instruction-btn" class="btn btn-success" data-toggle="modal" data-target="#instructionModal">Instruction</button>
 
                 <!-- Modal -->
-                <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal fade" id="instructionModal" tabindex="-1" aria-labelledby="instructionModalLabel" aria-hidden="true">
                     <div class="modal-dialog modal-dialog-centered">
                     <div class="modal-content">
                         <div class="modal-header">
@@ -41,6 +41,7 @@
                     <h5>Welcome, 
                         <span id="name" class="dropdown-toggle" data-toggle="dropdown">{{ username }}</span>
                         <div class="dropdown-menu">
+                            <a class="dropdown-item" href="/change-password">Change password</a>
                             <a class="dropdown-item" href="/logout">Logout</a>
                         </div>
                     </h5>

@@ -18,7 +18,11 @@
                 
                 <div class="text-center">
                     <div>{{ message }}</div>
-                    <a href="/login">Login</a>
+                    {% if back_to_login %}
+                        <a href="/login">Login</a>
+                    {% else %}
+                        <a href="/">Back to main page</a>
+                    {% endif %}
                 </div>
             </div>
         </div>
