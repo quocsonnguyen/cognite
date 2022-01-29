@@ -89,8 +89,8 @@ $(document).ready(function () {
                         `
                         tbody.append(tr)
                         $('#current-table').val('global_backup')
-                        $('#type-of-data').text('GLOBAL BACKUP Data')
-                        $('#switch-btn').text('Switch to GLOBAL file')
+                        $('#type-of-data').text('Backup Data')
+                        $('#switch-btn').text('Switch to Data file')
                     }
                 } else {
                     $('#tbody').empty()
@@ -139,8 +139,8 @@ $(document).ready(function () {
                         `
                         tbody.append(tr)
                         $('#current-table').val('global')
-                        $('#type-of-data').text('GLOBAL Data')
-                        $('#switch-btn').text('Switch to GLOBAL BACKUP file')
+                        $('#type-of-data').text('Data')
+                        $('#switch-btn').text('Switch to Backup Data file')
                     }
                 } else {
                     $('#tbody').empty()
@@ -156,6 +156,8 @@ $(document).ready(function () {
 
         if (fromIndex && toIndex && skip && fromIndex > 0 && skip > 0) {
             if (toIndex > fromIndex || toIndex==-1) {
+                $('#v-btn').addClass('d-none')
+                $('#spinner').removeClass('d-none')
                 $.ajax({
                     url: '/api/visualize',
                     type: 'get',
@@ -165,9 +167,11 @@ $(document).ready(function () {
                         skip: skip
                     }
                 }).done(result => {
+                    $('#spinner').addClass('d-none')
+                    $('#v-btn').removeClass('d-none')
                     if (result.code === 0) {
-                        $('#current-intensity-inp').val(Number.parseFloat(result.data.currentIntensity).toFixed(1))
-                        $('#p-score-inp').val(Number.parseFloat(result.data.personalisedScore).toFixed(2))
+                        $('#current-intensity-inp').val(Number.parseFloat(result.data.currentIntensity).toFixed(4))
+                        $('#p-score-inp').val(Number.parseFloat(result.data.personalisedScore).toFixed(4))
                         $('#noise-inp').val(result.data.noise)
                         $('#v-img-1').attr('src', '/api/image/gp_acq.png/' + Date.now())
                         $('#v-img-2').attr('src', '/api/image/gp_mean.png/' + Date.now())

@@ -55,6 +55,7 @@ $(document).ready(function(){
     $('#get-freq-btn').click(() => {
         let ps = $('#personalised-score').val()
         ps = Number.parseFloat(ps)
+
         if (ps > 0) {
             $.ajax({
                 url: '/api/get-freq',
@@ -66,6 +67,11 @@ $(document).ready(function(){
                 console.log(result);
                 $('#freq').val(result.freq.toFixed(2))
             })
+        } else {
+            $('#alert-msg').removeClass('d-none')   
+            setTimeout(() => {
+                $('#alert-msg').addClass('d-none')   
+            }, 4000)
         }
     })
 
@@ -78,7 +84,16 @@ $(document).ready(function(){
         ps = Number.parseFloat(ps)
         p = Number.parseFloat(p)
 
-        if (freq && ps && p && p >= 0) {
+        if (p <= 0) {
+            $('#alert-msg').removeClass('d-none')   
+            setTimeout(() => {
+                $('#alert-msg').addClass('d-none')   
+            }, 4000)
+
+            return
+        }
+
+        if (freq && ps && p) {
             $.ajax({
                 url: '/api/save-new-record',
                 type: 'post',

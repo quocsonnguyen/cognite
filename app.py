@@ -1,5 +1,6 @@
-from email import message
 import os
+from dotenv import load_dotenv
+load_dotenv()
 import math
 
 import sys
@@ -8,17 +9,32 @@ from suggest_new_experiment import get_frequency
 from visualization_current_intensity_personalised_score_performance import visualize
 
 from flask import Flask, request, session, render_template, redirect, send_file
+from flask_mail import Mail, Message
 from flask_sqlalchemy import SQLAlchemy
 from  werkzeug.security import generate_password_hash, check_password_hash
 from datetime import datetime, time
 import pandas as pd
 import uuid
 
+import string    
+import random
+
+def get_random_string():
+    ran = ''.join(random.choices(string.ascii_uppercase + string.digits, k=10))
+    return ran    
+
 app = Flask(__name__, template_folder='templates', static_folder='assets')
-app.config['SECRET_KEY'] = 'cognite secret 12/2021'
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = True
+app.config['MAIL_SERVER']='smtp.gmail.com'
+app.config['MAIL_PORT'] = 465
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+app.config['MAIL_USE_TLS'] = False
+app.config['MAIL_USE_SSL'] = True
 
+mail = Mail(app)
 db = SQLAlchemy(app)
 DATA_PATH = './data/'
 
@@ -189,7 +205,7 @@ def register():
                 session['user_filename'] = email + '.csv'
                 session['user_email'] = email
                 session['user_role'] = 'user'
-                write_history('login')
+                write_history('account created')
                 return redirect('/')
             except:
                 return render_template('register.html', message='This phone number is already in use')
@@ -305,7 +321,7 @@ def get_freq():
         ps = float(ps)
         
         freq = get_frequency(DATA_PATH + 'GLOBAL.csv', ps)
-        write_history('get freq')
+        write_history('get current intensity')
 
         return {
             'code' : 0,
@@ -314,7 +330,7 @@ def get_freq():
     except:
         return {
             'code' : 2,
-            'msg' : 'Can not get frequency'
+            'msg' : 'Can not get current intensity'
         }
 
 @app.route('/api/save-new-record', methods=['POST'])
@@ -468,10 +484,17 @@ def forget_password():
             return render_template('forgetPassword.html', message='Wrong phone number for this user!')
 
         # update this user
-        user.password = generate_password_hash(user.email)
+        r_string = get_random_string()
+        user.password = generate_password_hash(r_string)
         db.session.commit()
+
+        # send mail
+        msg = Message('Your password has been changed!', sender=os.getenv('MAIL_USERNAME'), recipients=[email])
+        msg.body = f"Hey {user.name}, your new password is: {r_string}. Please login and change it"
+        mail.send(msg)
+
         return render_template('successMessage.html',
-            message="Congratulations, your password has been reset to your email.",
+            message="Please check your email for new password.",
             back_to_login=True)
         
 @app.route('/api/visualize')

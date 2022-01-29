@@ -16,7 +16,7 @@
         <div id="container" class="container-fluid">
             
             <div style="display: flex; align-items: center; justify-content: space-between;">
-                <button id="switch-btn" class="btn btn-success">Switch to GLOBAL BACKUP file</button>
+                <button id="switch-btn" class="btn btn-success">Switch to Backup Data file</button>
                 <input id="current-table" type="hidden" value="global">
                 <h2 class="text-center">Cognite Neuro</h2>
                 <button class="btn btn-success" data-toggle="modal" data-target="#lastActivity">Last activity</button>
@@ -24,7 +24,7 @@
 
             <div class="row">
                 <div class="col-5 data-section">
-                    <h5 id="type-of-data" class="text-center">GLOBAL Data</h5>
+                    <h5 id="type-of-data" class="text-center">Data</h5>
                     <div class="table-data">
                         <table class="table table-striped">
                             <thead id="thead">
@@ -64,13 +64,16 @@
                     <h5 class="text-center">Visualization</h5>
 
                     <div class="visualize-input-section">
-                        From index: <input id="from-i" class="visualize-input form-control" type="text">
-                        To index: <input id="to-i" class="visualize-input form-control" type="text">
-                        Skip: <input id="skip" class="visualize-input-skip form-control" type="text">
+                        From index: <input id="from-i" class="visualize-input form-control" type="text" value="1">
+                        To index: <input id="to-i" class="visualize-input form-control" type="text" value="-1">
+                        Skip: <input id="skip" class="visualize-input-skip form-control" type="text" value="1">
                     </div>
 
                     <div style="margin-top: 10px;" class="text-center">
                         <button id="v-btn" class="btn btn-success">Visualize</button>
+                        <div style="margin-bottom: 5px;" id="spinner" class="spinner-border text-success d-none" role="status">
+                            <span class="sr-only">Loading...</span>
+                        </div>
                     </div>
 
                     <hr>
