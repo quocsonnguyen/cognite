@@ -12,10 +12,12 @@ function deleteRow(rowId) {
                 url: '/api/load-table',
                 type: 'get'
             }).done(result => {
+                console.log(result)
                 if (result.code === 0) {
                     // Render table
                     let tbody = $('#tbody')
                     tbody.empty()
+                    console.log(result)
                     for (let i = 0; i <= result.data.length; i++) {
                         if (result.data[i] === undefined) { continue }
                         let tr = document.createElement('tr')
@@ -23,9 +25,11 @@ function deleteRow(rowId) {
                             <tr>
                                 <th class="align-middle"  scope="row">${i+1}</th>
                                 <td class="align-middle">${result.data[i][1]}</td>
-                                <td class="align-middle">${result.data[i][0]}</td>
                                 <td class="align-middle">${result.data[i][2]}</td>
+                                <td class="align-middle">${result.data[i][0]}</td>
                                 <td class="align-middle">${result.data[i][3]}</td>
+                                <td class="align-middle">${result.data[i][4]}</td>
+                                <td class="align-middle">${result.data[i][5]}</td>
                                 <td class="align-middle">
                                     <button 
                                         class="button-delete" type="button" 
@@ -93,15 +97,18 @@ $(document).ready(function(){
     })
 
     $('#save-record-btn').click(() => {
+        let sh = $('#spherical-head').val()
+        let bs = $('#behavioral-score').val()
         let freq = $('#freq').val()
-        let ps = $('#personalised-score').val()
-        let p = $('#performance').val()
-
+        let o = $('#outcome').val()
+        
+        sh = Number.parseFloat(sh)
+        bs = Number.parseFloat(bs)
         freq = Number.parseFloat(freq)
-        ps = Number.parseFloat(ps)
-        p = Number.parseFloat(p)
+        o = Number.parseFloat(o)
 
-        if (p <= 0) {
+        if (o <= 0) {
+            $('#alert-msg').html('Outcome must be greater than 0')
             $('#alert-msg').removeClass('d-none')   
             setTimeout(() => {
                 $('#alert-msg').addClass('d-none')   
@@ -110,27 +117,31 @@ $(document).ready(function(){
             return
         }
 
-        if (freq && ps && p) {
+        if (sh && bs && freq && o) {
             $.ajax({
                 url: '/api/save-new-record',
                 type: 'post',
                 dataType: 'json',
                 data: {
-                    freq : freq,
-                    ps : ps,
-                    p : p
+                    sh : sh,
+                    bs : bs,
+                    freq: freq,
+                    o : o,
                 }
             }).done(function(result) {
                 console.log(result);
                 if (result.code === 0) {
+                    let ratio = Number.parseFloat(o) / Number.parseFloat(bs)
                     let count = $('#tbody tr').length + 1
                     let tr = document.createElement('tr')
                     tr.innerHTML = `
                         <tr>
                             <th class="align-middle" scope="row">${count}</th>
-                            <td class="align-middle">${ps.toFixed(2)}</td>
+                            <td class="align-middle">${sh}</td>
+                            <td class="align-middle">${bs.toFixed(4)}</td>
                             <td class="align-middle">${freq.toFixed(1)}</td>
-                            <td class="align-middle">${p.toFixed(1)}</td>
+                            <td class="align-middle">${o.toFixed(4)}</td>
+                            <td class="align-middle">${ratio.toFixed(4)}</td>
                             <td class="align-middle">${result.addedTime}</td>
                             <td class="align-middle">
                                 <button 

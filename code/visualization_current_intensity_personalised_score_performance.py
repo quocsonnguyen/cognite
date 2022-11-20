@@ -110,10 +110,6 @@ def visualize(data_path, from_index=0, to_index=-1, skip=1):
         'noise' : bo.gp.noise_delta
     }
 
-
-data_path = "../data/GLOBAL.csv"
-output = visualize(data_path)
-
 #print(output)
 
 

@@ -90,11 +90,10 @@ def index():
     try:
         DATA_FILENAME = session['user_filename']
         df = pd.read_csv(DATA_PATH + DATA_FILENAME, header=None)
-        df = df.drop(1, axis=1)
         table_data = df.values.tolist()
         new_table_data = []
         for row in table_data:
-            new_table_data.append([round(row[0],1), round(row[1], 2), float("{:.1f}".format(row[2])), row[3]])
+            new_table_data.append([round(row[0],1), round(row[1], 1), float("{:.4f}".format(row[2])), float("{:.4f}".format(row[3])), float("{:.4f}".format(row[4])), row[5]])
 
         return render_template('index.html', username=session['username'], table_data=new_table_data)
     except:
@@ -190,7 +189,7 @@ def register():
                     email = email,
                     phoneNumber = phoneNumber,
                     password = generate_password_hash(password),
-                    role = "user"
+                    role = 'user'
                 )
                 # insert user
                 db.session.add(user)
@@ -223,11 +222,12 @@ def load_table():
         DATA_FILENAME = session['user_filename']
         try:
             df = pd.read_csv(DATA_PATH + DATA_FILENAME, header=None)
-            df = df.drop(1, axis=1)
+            # df = df.drop(1, axis=1)
             table_data = df.values.tolist()
             new_table_data = []
             for row in table_data:
-                new_table_data.append([round(row[0],1), round(row[1], 2), float("{:.1f}".format(row[2])), row[3]])
+                new_table_data.append([round(row[0],1), round(row[1], 1), float("{:.4f}".format(row[2])), float("{:.4f}".format(row[3])), float("{:.4f}".format(row[4])), row[5]])
+            
             return {
                 'code' : 0,
                 'data' : new_table_data
@@ -343,11 +343,15 @@ def save_new_record():
             'code' : 5,
             'msg' : 'You do not have permission'
         }
+
     try:
+        sh = request.form['sh']
+        bs = request.form['bs']
         freq = request.form['freq']
-        col2 = 0
-        ps = request.form['ps']
-        p = request.form['p']
+        o = request.form['o']
+        ratio = float(o) / float(bs)
+
+
         now = datetime.now()
         added_time = now.strftime("%d/%m/%Y %H:%M:%S")
 
@@ -356,19 +360,19 @@ def save_new_record():
         DATA_FILENAME_BACKUP = DATA_FILENAME.replace('.csv', '_BACKUP.csv')
 
         with open(DATA_PATH + DATA_FILENAME, 'a') as f:
-            f.write(f'{freq}, {col2}, {ps}, {p}, {added_time}')
+            f.write(f'{freq}, {sh}, {bs}, {o}, {ratio}, {added_time}')
             f.write("\n")
 
         with open(DATA_PATH + DATA_FILENAME_BACKUP, 'a') as f:
-            f.write(f'{freq}, {col2}, {ps}, {p}, {added_time}')
+            f.write(f'{freq}, {sh}, {bs}, {o}, {ratio}, {added_time}')
             f.write("\n")
 
         with open(DATA_PATH + 'GLOBAL.csv', 'a') as f:
-            f.write(f'{freq}, {col2}, {ps}, {p}, {added_time}, {user_email}')
+            f.write(f'{freq}, {sh}, {bs}, {o}, {ratio}, {added_time}, {user_email}')
             f.write("\n")
 
         with open(DATA_PATH + 'GLOBAL_BACKUP.csv', 'a') as f:
-            f.write(f'{freq}, {col2}, {ps}, {p}, {added_time}, {user_email}')
+            f.write(f'{freq}, {sh}, {bs}, {o}, {ratio}, {added_time}, {user_email}')
             f.write("\n")
         
         write_history('save new record')
@@ -560,7 +564,7 @@ def change_password():
         user.password = generate_password_hash(new_password)
         db.session.commit()
         return render_template('successMessage.html',
-            message="Congratulations, your password has been changed.")
+            message="Your password has been changed.")
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=8080)
+    app.run(debug=False, host='0.0.0.0', port=8080)

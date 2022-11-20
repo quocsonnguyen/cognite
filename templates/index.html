@@ -55,9 +55,11 @@
                         <table class="table table-striped">
                             <thead>
                                 <th scope="col" class="align-middle">#</th>
-                                <th scope="col">Personalised Score</th>
-                                <th scope="col">Current Intensity</th>
-                                <th scope="col" class="align-middle">Performance</th>
+                                <th scope="col">Spherical Head</th>
+                                <th scope="col">Behavioral Score</th>
+                                <th scope="col">Stimulation Intensity</th>
+                                <th scope="col" class="align-middle">Outcome</th>
+                                <th scope="col" class="align-middle">Ratio</th>
                                 <th scope="col" class="align-middle">Added Time</th>
                                 <th scope="col" class="align-middle">Action</th>
                             </thead>
@@ -66,9 +68,11 @@
                                     <tr>
                                         <th class="align-middle" scope="row">{{ loop.index0+1 }}</th>
                                         <td class="align-middle">{{ row[1] }}</td>
-                                        <td class="align-middle">{{ row[0] }}</td>
                                         <td class="align-middle">{{ row[2] }}</td>
+                                        <td class="align-middle">{{ row[0] }}</td>
                                         <td class="align-middle">{{ row[3] }}</td>
+                                        <td class="align-middle">{{ row[4] }}</td>
+                                        <td class="align-middle">{{ row[5] }}</td>
                                         <td class="align-middle">
                                             <button
                                                 class="button-delete" type="button"

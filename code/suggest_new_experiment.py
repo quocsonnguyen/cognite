@@ -122,11 +122,6 @@ def get_frequency(data_path, personalised_score):
     return newinput[0]
 
 
-data_path = "../data/GLOBAL.csv"
-temp = get_frequency(data_path, personalised_score=0.62) # old
-temp = get_frequency(data_path, personalised_score=[60, 0.62]) # new
-print(temp)
-
 
     # newinput[2]=personalised_score
     #print(newinput)
