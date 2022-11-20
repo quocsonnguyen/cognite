@@ -7,14 +7,19 @@ Created on Tue Jun 25 16:28:19 2019
 
 import pandas as pd
 import numpy as np
-import matplotlib.pyplot as plt
+#import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from bayes_opt.sequentialBO.bayesian_optimization import BayesOpt
-from bayes_opt.test_functions import psychology_tom_blackbox
-from bayes_opt.visualization import visualization_psy
+from bayes_opt.sequentialBO.bayesian_optimization_uniqueGP import BayesOpt_UniqueLoc
+
+#from bayes_opt.test_functions import psychology_tom_blackbox
+from bayes_opt.test_functions import cognite_blackbox
+
+#from bayes_opt.visualization import visualization_psy
 from numpy import loadtxt
 
 def get_frequency(data_path, personalised_score):
+
     olddata=pd.read_csv(data_path, names=range(6))
     data=olddata.values
 
@@ -36,34 +41,34 @@ def get_frequency(data_path, personalised_score):
     #plt.colorbar(p3d)
     #fig.savefig("Data_Plot.pdf")
 
-    init_X=data[:,:2].astype(float)
-    init_Y=data[:,3].astype(float)
+    init_X=data[1:,:3].astype(float)
+    init_Y=data[1:,4].astype(float)
     #context_obs=data[:,2]
-
 
 
     acq_type={}
     acq_type['name']='ucb'
-    acq_type['surrogate']='pgp'
-    acq_type['dim']=2
+    acq_type['surrogate']='pgp_unique'
+    acq_type['dim']=[1,2]
 
-    myfunction=psychology_tom_blackbox.PsychologyTom_CF()
+    #myfunction=psychology_tom_blackbox.PsychologyTom_CF()
 
-    func_params={}
-    func_params['function']=myfunction
+    # func_params={}
+    # func_params['function']=myfunction
 
-    gp_params = {'lengthscale':0.004,'noise_delta':1e-6} # the lengthscaled parameter will be optimized
+    # gp_params = {'lengthscale':0.004,'noise_delta':1e-6} # the lengthscaled parameter will be optimized
 
 
     acq_params={}
     acq_params['acq_func']=acq_type
-    acq_params['optimize_gp']='loo'
+    acq_params['optimize_gp']='maximize'
 
         
-    bo=BayesOpt(gp_params,func_params,acq_params,verbose=1)
-    
+    #bo=BayesOpt(gp_params,func_params,acq_params,verbose=1)
+    #bo=BayesOpt_UniqueLoc(gp_params,func_params,acq_params,verbose=1)
+
     # initialize BO using 3*dim number of observation
-    bo.init_with_data(init_X,init_Y)
+    #bo.init_with_data(init_X,init_Y)
 
     #GPmean_input,GPmean_output=[],[]
     # GPmean_input,GPmean_output=visualization_psy.plot_bo_2d_withGPmeans(bo)
@@ -77,26 +82,28 @@ def get_frequency(data_path, personalised_score):
     # pd.DataFrame(np.asarray(temp)).to_csv("temp/GPmean_noability.csv",index=False,header=False)
 
 
-
     #bo.maximize()
 
 
     # ======================================================================
     # Exporting plot condition on ability
 
-    # Init Bayes Opt 3D
+    # Init Bayes Opt 2D
 
-    myfunction=psychology_tom_blackbox.PsychologyTom_3D()
+    #myfunction=psychology_tom_blackbox.PsychologyTom_3D()
+    myfunction = cognite_blackbox.CogniteFunc_3D()
+
     func_params={}
     func_params['function']=myfunction
 
-    gp_params = {'lengthscale':0.02,'noise_delta':1e-6} # the lengthscaled parameter will be optimized
+    gp_params = {'lengthscale':0.02,'noise_delta':2e-2} # the lengthscaled parameter will be optimized
 
 
-    bo3d=BayesOpt(gp_params,func_params,acq_params,verbose=1)
-    bo3d.init_with_data(data[:,:3].astype(float),data[:,3].astype(float))
-    newinput=bo3d.maximize_condition(personalised_score)
-
+    #bo3d=BayesOpt(gp_params,func_params,acq_params,verbose=1)
+    bo2d = BayesOpt_UniqueLoc(gp_params,func_params,acq_params,verbose=1)
+    #bo2d.init_with_data(data[:,:3].astype(float),data[:,3].astype(float))
+    bo2d.init_with_data(init_X[:,0].astype(float),init_X[:,[1,2]].astype(float),init_Y.astype(float))
+    newinput=bo2d.maximize_given_2d_context(personalised_score)
 
     #print("=================================================================")
     #print("Suggested input: Current={:.3f} Frequency={:.1f} given Baseline={:.3f}".format(bo3d.X_original[-1][0],
@@ -106,60 +113,24 @@ def get_frequency(data_path, personalised_score):
     #newinput=[bo3d.X_original[-1][0],bo3d.X_original[-1][1],bo3d.X_original[-1][2]]
 
     # check if newinput is existed, perform random exploration
-    if np.any(np.abs((bo3d.X_original[:-1] - newinput)).sum(axis=1) <=(bo3d.dim*1e-9)):
+    if np.any(np.abs((bo2d.X_original[:-1] - newinput)).sum(axis=1) <=(bo2d.dim*1e-6)):
         #print("rand")
-        newinput = np.random.uniform(bo3d.bounds[:, 0],
-                                        bo3d.bounds[:, 1],
-                                        size=bo3d.bounds.shape[0])
-        
+        newinput = np.random.uniform(bo2d.bounds[:, 0],
+                                        bo2d.bounds[:, 1],
+                                        size=bo2d.bounds.shape[0])
+      
     return newinput[0]
+
+
+data_path = "../data/GLOBAL.csv"
+temp = get_frequency(data_path, personalised_score=0.62) # old
+temp = get_frequency(data_path, personalised_score=[60, 0.62]) # new
+print(temp)
+
+
     # newinput[2]=personalised_score
     #print(newinput)
     # np.savetxt("suggested_frequency.csv", np.asarray(newinput), delimiter=",")
-
-# GPmean_input,GPmean_output=visualization_psy.plot_bo_2d_withGPmeans_condition(bo3d,0.0353)
-# GPmean_output=np.reshape(GPmean_output,(-1,1))
-# temp=np.hstack((GPmean_input,GPmean_output))
-# pd.DataFrame(np.asarray(temp)).to_csv("temp/GPmean_ability_25pc.csv",index=False,header=False)
-
-
-# GPmean_input,GPmean_output=visualization_psy.plot_bo_2d_withGPmeans_condition(bo3d,0.0541)
-# GPmean_output=np.reshape(GPmean_output,(-1,1))
-# temp=np.hstack((GPmean_input,GPmean_output))
-# pd.DataFrame(np.asarray(temp)).to_csv("temp/GPmean_ability_50pc.csv",index=False,header=False)
-
-
-# GPmean_input,GPmean_output=visualization_psy.plot_bo_2d_withGPmeans_condition(bo3d,0.0713)
-# GPmean_output=np.reshape(GPmean_output,(-1,1))
-# temp=np.hstack((GPmean_input,GPmean_output))
-# pd.DataFrame(np.asarray(temp)).to_csv("temp/GPmean_ability_75pc.csv",index=False,header=False)
-
-# GPmean_input,GPmean_output=visualization_psy.plot_bo_2d_withGPmeans_condition(bo3d,0.0335)
-# GPmean_output=np.reshape(GPmean_output,(-1,1))
-# temp=np.hstack((GPmean_input,GPmean_output))
-# pd.DataFrame(np.asarray(temp)).to_csv("temp/GPmean_ability_minus1std.csv",index=False,header=False)
-
-
-# GPmean_input,GPmean_output=visualization_psy.plot_bo_2d_withGPmeans_condition(bo3d,0.0551)
-# GPmean_output=np.reshape(GPmean_output,(-1,1))
-# temp=np.hstack((GPmean_input,GPmean_output))
-# pd.DataFrame(np.asarray(temp)).to_csv("temp/GPmean_ability_mean.csv",index=False,header=False)
-
-
-# GPmean_input,GPmean_output=visualization_psy.plot_bo_2d_withGPmeans_condition(bo3d,0.0766)
-# GPmean_output=np.reshape(GPmean_output,(-1,1))
-# temp=np.hstack((GPmean_input,GPmean_output))
-# pd.DataFrame(np.asarray(temp)).to_csv("temp/GPmean_ability_plus1std.csv",index=False,header=False)
-
-
-
-# GPmean_input,GPmean_output=visualization_psy.plot_bo_2d_withGPmeans_condition(bo3d,mybaseline)
-# #visualization_psy.plot_bo_2d_condition(bo3d,mybaseline,newinput)
-
-# GPmean_output=np.reshape(GPmean_output,(-1,1))
-# temp=np.hstack((GPmean_input,GPmean_output))
-# strPath="temp/GPmean_ability_{:.3f}.csv".format(mybaseline)
-# pd.DataFrame(np.asarray(temp)).to_csv(strPath,index=False,header=False)
 
 
 

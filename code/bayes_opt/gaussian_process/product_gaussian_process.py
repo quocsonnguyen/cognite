@@ -12,10 +12,7 @@ import scipy.linalg as spla
 from bayes_opt.gaussian_process.gaussian_process_base import GaussianProcessBase
 
 class ProductGaussianProcess(GaussianProcessBase):
-
-#class ProductGaussianProcess(object):
     # in this class of Gaussian process, we define k( {x,t}, {x',t'} )= k(x,x')*k(t,t')
-    
     
     #def __init__ (self,param):
     def __init__ (self,param):
@@ -106,10 +103,8 @@ class ProductGaussianProcess(GaussianProcessBase):
         
             
         Euc_dist_x=euclidean_distances(X,X)
-        #exp_dist_x=np.exp(-np.square(Euc_dist)/self.hyper['lengthscale_x'])+np.eye(len(X))*self.noise_delta
     
         Euc_dist_t=euclidean_distances(T,T)
-        #exp_dist_t=np.exp(-np.square(Euc_dist)/self.hyper['lengthscale_x']_t)+np.eye(len(X))*self.noise_delta       
     
         self.KK_x_x=np.exp(-np.square(Euc_dist_x)/self.lengthscale_x\
                            -np.square(Euc_dist_t)/self.lengthscale_t)+np.eye(len(X))*self.noise_delta
@@ -146,27 +141,20 @@ class ProductGaussianProcess(GaussianProcessBase):
         tTest=np.reshape(tTest,(-1,1))
         
         if self.kernel_name=='SE':
-            #Euc_dist=euclidean_distances(xTest,xTest)
-            #KK_xTest_xTest=np.exp(-np.square(Euc_dist)/self.hyper['lengthscale_x'])+np.eye(xTest.shape[0])*self.noise_delta
-            #ur = unique_rows(X)
             myX=X
             myT=T
             
             Euc_dist_x=euclidean_distances(myX,myX)
-            #exp_dist_x=np.exp(-np.square(self.Euc_dist_x)/lengthscale)+np.eye(len(myX))*noise_delta
         
             Euc_dist_t=euclidean_distances(myT,myT)
-            #exp_dist_t=np.exp(-np.square(self.Euc_dist_t)/lengthscale_t)+np.eye(len(myX))*noise_delta      
         
             KK=np.exp(-np.square(Euc_dist_x)/self.hyper['lengthscale_x']-np.square(Euc_dist_t)/self.hyper['lengthscale_t'])\
                 +np.eye(len(myX))*self.noise_delta
                     
                  
             Euc_dist_test_train_x=euclidean_distances(xTest,X)
-            #Exp_dist_test_train_x=np.exp(-np.square(Euc_dist_test_train_x)/self.hyper['lengthscale_x'])
             
             Euc_dist_test_train_t=euclidean_distances(tTest,T)
-            #Exp_dist_test_train_t=np.exp(-np.square(Euc_dist_test_train_t)/self.hyper['lengthscale_t'])
             
             KK_xTest_xTrain=np.exp(-np.square(Euc_dist_test_train_x)/self.hyper['lengthscale_x']-np.square(Euc_dist_test_train_t)/self.hyper['lengthscale_t'])
                 
@@ -249,8 +237,8 @@ class ProductGaussianProcess(GaussianProcessBase):
         #SearchSpace_lengthscale_max=0.2
         #mySearchSpace=[np.asarray([SearchSpace_lengthscale_min,SearchSpace_lengthscale_max]).T]
         
-        mySearchSpace=np.asarray([[0.00001,0.2],\
-                            [0.00001,0.2]])
+        mySearchSpace=np.asarray([[0.001,0.2],\
+                            [0.001,0.2]])
         
         # Concatenate new random points to possible existing
         # points from self.explore method.
@@ -359,11 +347,11 @@ class ProductGaussianProcess(GaussianProcessBase):
 
             logmarginal=first_term+second_term-0.5*len(myY)*np.log(2*3.14)
                 
-            if np.isnan(np.asscalar(logmarginal))==True:
+            if np.isnan(np.float(logmarginal))==True:
                 print("lengthscale_x={:f} lengthscale_t={:f} first term ={:.4f} second  term ={:.4f}".format(
                         lengthscale_x,lengthscale_t,np.asscalar(first_term),np.asscalar(second_term)))
 
-            return np.asscalar(logmarginal)
+            return np.float(logmarginal)
         
         logmarginal=0
 

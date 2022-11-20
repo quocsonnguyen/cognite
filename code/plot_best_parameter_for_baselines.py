@@ -10,6 +10,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 from bayes_opt.sequentialBO.bayesian_optimization import BayesOpt
+from bayes_opt.sequentialBO.bayesian_optimization_uniqueGP import BayesOpt_UniqueLoc
+
 from bayes_opt.test_functions import psychology_tom_blackbox
 from bayes_opt.visualization import visualization_psy
 from tqdm import tqdm
@@ -77,7 +79,9 @@ func_params['function']=myfunction
 gp_params = {'lengthscale':0.025,'noise_delta':1e-6} # the lengthscaled parameter will be optimized
 
 
-bo3d=BayesOpt(gp_params,func_params,acq_params,verbose=1)
+#bo3d=BayesOpt(gp_params,func_params,acq_params,verbose=1)
+bo=BayesOpt_UniqueLoc(gp_params,func_params,acq_params,verbose=1)
+
 bo3d.init_with_data(data[:,:3],data[:,3])
 newinput=bo3d.maximize_condition(mybaseline)
 

@@ -15,6 +15,7 @@ from bayes_opt.acquisition_functions import AcquisitionFunction, unique_rows
 #from bayes_opt.gaussian_process import GaussianProcess
 from bayes_opt.gaussian_process.gaussian_process import GaussianProcess
 from bayes_opt.gaussian_process.product_gaussian_process import ProductGaussianProcess
+from bayes_opt.gaussian_process.product_gaussian_process_unique_loc import ProductGaussianProcess_UniqueLoc
 
 from bayes_opt.acquisition_maximization import acq_max,acq_max_with_name
 
@@ -168,6 +169,8 @@ class BO_Sequential_Base(object):
             gp=GaussianProcess(gp_params) # this is to be changed to ProductGaussianProcess automatically
         elif self.acq_params['acq_func']['surrogate']=='pgp':
             gp=ProductGaussianProcess(gp_params) # this is to be changed to ProductGaussianProcess automatically
+        elif self.acq_params['acq_func']['surrogate']=='pgp_unique':
+            gp=ProductGaussianProcess_UniqueLoc(gp_params)
         else:
             print("please set the surrogate model as gp or pgp")
             

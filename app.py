@@ -317,10 +317,13 @@ def get_freq():
             'msg' : 'You do not have permission'
         }
     try:
-        ps = request.args.get('ps')
-        ps = float(ps)
+        sh = request.args.get('sh')
+        sh = float(sh)
+
+        bs = request.args.get('bs')
+        bs = float(bs)
         
-        freq = get_frequency(DATA_PATH + 'GLOBAL.csv', ps)
+        freq = get_frequency(DATA_PATH + 'GLOBAL.csv', [sh, bs])
         write_history('get current intensity')
 
         return {
@@ -560,4 +563,4 @@ def change_password():
             message="Congratulations, your password has been changed.")
 
 if __name__ == '__main__':
-    app.run(debug=False, host='0.0.0.0', port=8080)
+    app.run(debug=True, host='0.0.0.0', port=8080)

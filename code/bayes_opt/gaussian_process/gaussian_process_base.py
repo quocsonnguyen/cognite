@@ -233,11 +233,11 @@ class GaussianProcessBase(object):
 
             logmarginal=first_term+second_term-0.5*len(myY)*np.log(2*3.14)
                 
-            if np.isnan(np.asscalar(logmarginal))==True:
+            if np.isnan(np.float(logmarginal))==True:
                 print("theta={:s} first term ={:.4f} second  term ={:.4f}".format(lengthscale,np.asscalar(first_term),np.asscalar(second_term)))
                 #print temp_det
 
-            return np.asscalar(logmarginal)
+            return np.float(logmarginal)
         
         #print lengthscale
         logmarginal=0

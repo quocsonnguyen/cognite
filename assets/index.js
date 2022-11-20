@@ -53,26 +53,43 @@ function preDeleteRow(rowId) {
 
 $(document).ready(function(){
     $('#get-freq-btn').click(() => {
-        let ps = $('#personalised-score').val()
-        ps = Number.parseFloat(ps)
-
-        if (ps > 0) {
-            $.ajax({
-                url: '/api/get-freq',
-                type: 'get',
-                data: {
-                    ps: ps
-                }
-            }).done(function(result) {
-                console.log(result);
-                $('#freq').val(result.freq.toFixed(2))
-            })
-        } else {
+        let sh = $('#spherical-head').val()
+        sh = Number.parseFloat(sh)
+        
+        // Validate for spherical-head (48-70)
+        if (!(sh >= 48 && sh <= 70)) {
+            $('#alert-msg').html('Spherical Head must be in range [48-70]')
             $('#alert-msg').removeClass('d-none')   
             setTimeout(() => {
                 $('#alert-msg').addClass('d-none')   
             }, 4000)
+            return;
         }
+
+        let bs = $('#behavioral-score').val()
+        bs = Number.parseFloat(bs)
+
+        // Validate for behavioral-score (0-1)
+        if (!(bs >= 0 && bs <= 1)) {
+            $('#alert-msg').html('Behavioral Score must be in range [0-1]')
+            $('#alert-msg').removeClass('d-none')   
+            setTimeout(() => {
+                $('#alert-msg').addClass('d-none')   
+            }, 4000)
+            return; 
+        }
+
+        $.ajax({
+            url: '/api/get-freq',
+            type: 'get',
+            data: {
+                sh: sh,
+                bs: bs,
+            }
+        }).done(function(result) {
+            console.log(result);
+            $('#freq').val(result.freq.toFixed(2))
+        })
     })
 
     $('#save-record-btn').click(() => {

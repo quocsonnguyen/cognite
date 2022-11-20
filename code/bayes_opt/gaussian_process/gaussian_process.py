@@ -100,7 +100,8 @@ class GaussianProcess(GaussianProcessBase):
         else:
             KK=pdist(self.X,lambda a,b: self.kernel_dist(a,b,self.lengthscale)) 
             KK=squareform(KK)
-            self.KK_x_x=KK+np.eye(self.X.shape[0])*(1+self.noise_delta)
+            #self.KK_x_x=KK+np.eye(self.X.shape[0])*(1+self.noise_delta)
+            self.KK_x_x=KK+np.eye(self.X.shape[0])*self.noise_delta
             
         #Euc_dist=euclidean_distances(X,X)
         #self.KK_x_x=np.exp(-self.theta*np.square(Euc_dist))+self.noise_delta

@@ -10,12 +10,9 @@ import sys
 sys.path.insert(0,'../../')
 sys.path.insert(0,'..')
 import numpy as np
-#import mayavi.mlab as mlab
-#from scipy.stats import norm
-#import matplotlib as plt
+
 from mpl_toolkits.mplot3d import Axes3D
-#from bayes_opt.bayesian_optimization_function import PradaBayOptFn
-#from bayes_opt import PradaBayOptBatch
+
 import matplotlib.patches as patches
 import matplotlib.pyplot as plt
 from matplotlib import gridspec
@@ -53,7 +50,6 @@ counter = 0
        #self.myBo=bo
 
 
-out_dir="P:\\03.Research\\05.BayesianOptimization\\PradaBayesianOptimization\\pickle_storage"
 out_dir=""
         
 def plot_bo(bo):
@@ -1086,7 +1082,7 @@ def plot_bo_2d_withGPmeans_condition(bo,ability_org,newinput=[]):
     return X_ori, mu_original
     
     
-def plot_bo_2d_withGPmeans_Sigma(bo,myxlabel="",myylabel=""):
+def plot_bo_2d_withGPmeans_Sigma(bo,myxlabel="",myylabel="",saveflag=""):
     
     x1 = np.linspace(bo.scalebounds[0,0], bo.scalebounds[0,1], 60)
     x2 = np.linspace(bo.scalebounds[1,0], bo.scalebounds[1,1], 60)
@@ -1123,7 +1119,8 @@ def plot_bo_2d_withGPmeans_Sigma(bo,myxlabel="",myylabel=""):
     CS=axis2d.contourf(x1g_ori,x2g_ori,mu.reshape(x1g.shape),cmap=my_cmap,origin='lower')
     #CS2 = plt.contour(CS, levels=CS.levels[::2],colors='r',origin='lower',hold='on')
     
-    axis2d.scatter(bo.X_original[:,0],bo.X_original[:,1], label=u'Observations', color='g')   
+    #axis2d.scatter(bo.X_original[:,0],bo.X_original[:,1], label=u'Observations', color='g')   
+    axis2d.scatter(bo.X_original[:,0],bo.T_original[:,0], label=u'Observations', color='g')   
     
     mu=mu.reshape(x1g.shape)
     idxMax=np.argmax(mu,axis=1)
@@ -1140,7 +1137,7 @@ def plot_bo_2d_withGPmeans_Sigma(bo,myxlabel="",myylabel=""):
     axis2d.legend()
 
     fig.colorbar(CS, ax=axis2d, shrink=0.9)
-    fig.savefig("gp_mean.png",dpi=600)
+    fig.savefig(saveflag+"_gp_mean.png",dpi=600)
 
     fig = plt.figure(figsize=(6, 5))
     acq2d = fig.add_subplot(1, 1, 1)
@@ -1153,7 +1150,8 @@ def plot_bo_2d_withGPmeans_Sigma(bo,myxlabel="",myylabel=""):
     idxBest=np.argmax(utility)
 
     
-    acq2d.scatter(bo.X_original[:,0],bo.X_original[:,1],color='g')  
+    #acq2d.scatter(bo.X_original[:,0],bo.X_original[:,1],color='g')  
+    acq2d.scatter(bo.X_original[:,0],bo.T_original[:,0],color='g')  
     
         
     #acq2d.scatter(bo.X_original[-1,0],bo.X_original[-1,1],color='r',s=60)
@@ -1170,10 +1168,10 @@ def plot_bo_2d_withGPmeans_Sigma(bo,myxlabel="",myylabel=""):
              
     
     fig.colorbar(CS_acq, ax=acq2d, shrink=0.9)
-    fig.savefig("gp_var.png",dpi=600)
+    fig.savefig(saveflag+"_gp_var.png",dpi=600)
 
 
-def plot_2d_Acq_by_Personalisedscore(bo,myxlabel="",myylabel=""):
+def plot_2d_Acq_by_Personalisedscore(bo,myxlabel="",myylabel="",saveflag=""):
     
     x1 = np.linspace(bo.scalebounds[0,0], bo.scalebounds[0,1], 60)
     x2 = np.linspace(bo.scalebounds[1,0], bo.scalebounds[1,1], 60)
@@ -1216,7 +1214,8 @@ def plot_2d_Acq_by_Personalisedscore(bo,myxlabel="",myylabel=""):
     CS=axis2d.contourf(x1g_ori,x2g_ori,utility,cmap=my_cmap,origin='lower')
     #CS2 = plt.contour(CS, levels=CS.levels[::2],colors='r',origin='lower',hold='on')
     
-    axis2d.scatter(bo.X_original[:,0],bo.X_original[:,1], label=u'Obs', color='g')    
+    #axis2d.scatter(bo.X_original[:,0],bo.X_original[:,1], label=u'Obs', color='g')    
+    axis2d.scatter(bo.X_original[:,0],bo.T_original[:,0], label=u'Obs', color='g')    
     
     
     axis2d.scatter(x1_ori[idxMax],x2_ori, label=u'Max by Y-axis', color='r',marker='x',s=25)    
@@ -1228,7 +1227,7 @@ def plot_2d_Acq_by_Personalisedscore(bo,myxlabel="",myylabel=""):
     axis2d.set_ylim(bo.bounds[1,0], bo.bounds[1,1])
     axis2d.legend()
     fig.colorbar(CS, ax=axis2d, shrink=0.9)
-    fig.savefig("gp_acq.png",dpi=600)
+    fig.savefig(saveflag+"_gp_acq.png",dpi=600)
 
 
     

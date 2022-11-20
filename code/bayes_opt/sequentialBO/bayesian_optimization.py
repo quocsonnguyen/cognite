@@ -264,7 +264,8 @@ class BayesOpt(BO_Sequential_Base):
         mybounds[-1,0]=mycondition_scale
         mybounds[-1,1]=mycondition_scale
 
-        x_max = acq_max(ac=self.acq_func.acq_kind,gp=self.gp,bounds=mybounds,opt_toolbox=self.opt_toolbox)
+        x_max = acq_max(ac=self.acq_func.acq_kind,gp=self.gp,bounds=mybounds,
+                        opt_toolbox=self.opt_toolbox)#seeds=self.xstars
 
         val_acq=self.acq_func.acq_kind(x_max,self.gp)
 

@@ -10,7 +10,7 @@
 
 #instruction-btn {
     position: absolute;
-    display: none;
+    /* display: none; */
     left: 15px; 
 }
 
