@@ -93,6 +93,10 @@ def index():
         table_data = df.values.tolist()
         new_table_data = []
         for row in table_data:
+            if (math.isnan(row[3])):
+                new_table_data.append([round(row[0],1), round(row[1], 1), float("{:.4f}".format(row[2])), '-', '-', row[5]])
+                continue
+                
             new_table_data.append([round(row[0],1), round(row[1], 1), float("{:.4f}".format(row[2])), float("{:.4f}".format(row[3])), float("{:.4f}".format(row[4])), row[5]])
 
         return render_template('index.html', username=session['username'], table_data=new_table_data)
@@ -106,17 +110,35 @@ def admin():
     elif session['user_role'] == "admin":
         try:
             history = History.query.all()
-            df = pd.read_csv(DATA_PATH + 'GLOBAL.csv', header=None, names=range(6))
-            df = df.drop(1, axis=1)
+            df = pd.read_csv(DATA_PATH + 'GLOBAL.csv', header=None, names=range(7))
             table_data = df.values.tolist()
             new_table_data = []
             for row in table_data:
-                if isinstance(row[4], str):
-                    new_table_data.append([round(row[0],1), round(row[1], 2), float("{:.1f}".format(row[2])), row[3], row[4]])
+                if isinstance(row[6], str):
+                    new_table_data.append([
+                        round(row[0],1), 
+                        round(row[1], 1), 
+                        float("{:.4f}".format(row[2])), 
+                        float("{:.4f}".format(row[3])), 
+                        float("{:.4f}".format(row[4])), 
+                        row[5],
+                        row[6],
+                    ])
                 else:
-                    new_table_data.append([round(row[0],1), round(row[1], 2), float("{:.1f}".format(row[2])), row[3], '-'])
+                    new_table_data.append([
+                        round(row[0],1), 
+                        round(row[1], 1), 
+                        float("{:.4f}".format(row[2])), 
+                        float("{:.4f}".format(row[3])), 
+                        float("{:.4f}".format(row[4])), 
+                        row[5],
+                        '-',
+                    ])
+
             last_activitys = last_activity()
+
             return render_template('admin.html', table_data=new_table_data, table_history=history, table_last_activity=last_activitys)
+
         except:
             return render_template('admin.html')
     else:
@@ -252,15 +274,32 @@ def load_global_table():
         }
     try:
         try:
-            df = pd.read_csv(DATA_PATH + 'GLOBAL.csv', header=None, names=range(6))
-            df = df.drop(1, axis=1)
+            df = pd.read_csv(DATA_PATH + 'GLOBAL.csv', header=None, names=range(7))
             table_data = df.values.tolist()
             new_table_data = []
+            
             for row in table_data:
-                if isinstance(row[4], str):
-                    new_table_data.append([round(row[0],1), round(row[1], 2), float("{:.1f}".format(row[2])), row[3], row[4]])
+                if isinstance(row[6], str):
+                    new_table_data.append([
+                        round(row[0],1), 
+                        round(row[1], 1), 
+                        float("{:.4f}".format(row[2])), 
+                        float("{:.4f}".format(row[3])), 
+                        float("{:.4f}".format(row[4])), 
+                        row[5],
+                        row[6],
+                    ])
                 else:
-                    new_table_data.append([round(row[0],1), round(row[1], 2), float("{:.1f}".format(row[2])), row[3], '-'])
+                    new_table_data.append([
+                        round(row[0],1), 
+                        round(row[1], 1), 
+                        float("{:.4f}".format(row[2])), 
+                        float("{:.4f}".format(row[3])), 
+                        float("{:.4f}".format(row[4])), 
+                        row[5],
+                        '-',
+                    ])
+            
             return {
                 'code' : 0,
                 'data' : new_table_data
@@ -285,15 +324,32 @@ def load_global_backup_table():
         }
     try:
         try:
-            df = pd.read_csv(DATA_PATH + 'GLOBAL_BACKUP.csv', header=None, names=range(6))
-            df = df.drop(1, axis=1)
+            df = pd.read_csv(DATA_PATH + 'GLOBAL_BACKUP.csv', header=None, names=range(7))
             table_data = df.values.tolist()
             new_table_data = []
+
             for row in table_data:
-                if isinstance(row[4], str):
-                    new_table_data.append([round(row[0],1), round(row[1], 2), float("{:.1f}".format(row[2])), row[3], row[4]])
+                if isinstance(row[6], str):
+                    new_table_data.append([
+                        round(row[0],1), 
+                        round(row[1], 1), 
+                        float("{:.4f}".format(row[2])), 
+                        float("{:.4f}".format(row[3])), 
+                        float("{:.4f}".format(row[4])), 
+                        row[5],
+                        row[6],
+                    ])
                 else:
-                    new_table_data.append([round(row[0],1), round(row[1], 2), float("{:.1f}".format(row[2])), row[3], '-'])
+                    new_table_data.append([
+                        round(row[0],1), 
+                        round(row[1], 1), 
+                        float("{:.4f}".format(row[2])), 
+                        float("{:.4f}".format(row[3])), 
+                        float("{:.4f}".format(row[4])), 
+                        row[5],
+                        '-',
+                    ])
+
             return {
                 'code' : 0,
                 'data' : new_table_data
@@ -324,11 +380,23 @@ def get_freq():
         bs = float(bs)
         
         freq = get_frequency(DATA_PATH + 'GLOBAL.csv', [sh, bs])
+
+        now = datetime.now()
+        added_time = now.strftime("%d/%m/%Y %H:%M:%S")
+
+        user_email = session['user_email']
+        DATA_FILENAME = session['user_filename']
+
+        with open(DATA_PATH + DATA_FILENAME, 'a') as f:
+            f.write(f'{freq},{sh},{bs},,,{added_time}')
+            f.write("\n")
+        
         write_history('get current intensity')
 
         return {
             'code' : 0,
             'freq' : freq,
+            'time' : added_time,
         }
     except:
         return {
@@ -351,7 +419,6 @@ def save_new_record():
         o = request.form['o']
         ratio = float(o) / float(bs)
 
-
         now = datetime.now()
         added_time = now.strftime("%d/%m/%Y %H:%M:%S")
 
@@ -360,19 +427,19 @@ def save_new_record():
         DATA_FILENAME_BACKUP = DATA_FILENAME.replace('.csv', '_BACKUP.csv')
 
         with open(DATA_PATH + DATA_FILENAME, 'a') as f:
-            f.write(f'{freq}, {sh}, {bs}, {o}, {ratio}, {added_time}')
+            f.write(f'{freq},{sh},{bs},{o},{ratio},{added_time}')
             f.write("\n")
 
         with open(DATA_PATH + DATA_FILENAME_BACKUP, 'a') as f:
-            f.write(f'{freq}, {sh}, {bs}, {o}, {ratio}, {added_time}')
+            f.write(f'{freq},{sh},{bs},{o},{ratio},{added_time}')
             f.write("\n")
 
         with open(DATA_PATH + 'GLOBAL.csv', 'a') as f:
-            f.write(f'{freq}, {sh}, {bs}, {o}, {ratio}, {added_time}, {user_email}')
+            f.write(f'{freq},{sh},{bs},{o},{ratio},{added_time},{user_email}')
             f.write("\n")
 
         with open(DATA_PATH + 'GLOBAL_BACKUP.csv', 'a') as f:
-            f.write(f'{freq}, {sh}, {bs}, {o}, {ratio}, {added_time}, {user_email}')
+            f.write(f'{freq},{sh},{bs},{o},{ratio},{added_time},{user_email}')
             f.write("\n")
         
         write_history('save new record')

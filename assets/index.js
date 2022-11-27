@@ -1,4 +1,5 @@
 function deleteRow(rowId) {
+    console.log(rowId);
     $('#close-modal-btn').click()
     $.ajax({
         url: '/api/delete-record',
@@ -8,44 +9,7 @@ function deleteRow(rowId) {
         }
     }).done(result => {
         if (result.code === 0) {
-            $.ajax({
-                url: '/api/load-table',
-                type: 'get'
-            }).done(result => {
-                console.log(result)
-                if (result.code === 0) {
-                    // Render table
-                    let tbody = $('#tbody')
-                    tbody.empty()
-                    console.log(result)
-                    for (let i = 0; i <= result.data.length; i++) {
-                        if (result.data[i] === undefined) { continue }
-                        let tr = document.createElement('tr')
-                        tr.innerHTML = `
-                            <tr>
-                                <th class="align-middle"  scope="row">${i+1}</th>
-                                <td class="align-middle">${result.data[i][1]}</td>
-                                <td class="align-middle">${result.data[i][2]}</td>
-                                <td class="align-middle">${result.data[i][0]}</td>
-                                <td class="align-middle">${result.data[i][3]}</td>
-                                <td class="align-middle">${result.data[i][4]}</td>
-                                <td class="align-middle">${result.data[i][5]}</td>
-                                <td class="align-middle">
-                                    <button 
-                                        class="button-delete" type="button" 
-                                        data-toggle="modal" data-target="#confirmDeleteModal"
-                                        onclick="preDeleteRow(${i+1})">
-                                        Delete
-                                    </button>
-                                </td>
-                            </tr>
-                        `
-                        tbody.append(tr)
-                    }
-                } else {
-                    $('#tbody').empty()
-                }
-            })
+            location.reload()
         }
     })
 }
@@ -53,6 +17,15 @@ function deleteRow(rowId) {
 function preDeleteRow(rowId) {
     $('#confirm-delete-btn').removeAttr('onclick');
     $('#confirm-delete-btn').attr('onClick', `deleteRow(${rowId})`);
+}
+
+function editRow(sh, bs, si) {
+    $('#spherical-head').val(sh)
+    $('#behavioral-score').val(bs)
+    $('#freq').val(si)
+
+    console.log(this);
+
 }
 
 $(document).ready(function(){
@@ -91,8 +64,42 @@ $(document).ready(function(){
                 bs: bs,
             }
         }).done(function(result) {
-            console.log(result);
-            $('#freq').val(result.freq.toFixed(2))
+            $('#freq').val(result.freq.toFixed(1))
+
+            let sh = $('#spherical-head').val()
+            let bs = $('#behavioral-score').val()
+
+            let tbody = $('#tbody')
+
+            console.log(tbody);
+
+            let tr = document.createElement('tr')
+            tr.innerHTML = `
+                <tr>
+                    <th class="align-middle"  scope="row">${tbody[0].children.length + 1}</th>
+                    <td class="align-middle">${sh}</td>
+                    <td class="align-middle">${bs}</td>
+                    <td class="align-middle">${result.freq.toFixed(1)}</td>
+                    <td class="align-middle">-</td>
+                    <td class="align-middle">-</td>
+                    <td class="align-middle">${result.time}</td>
+                    <td class="align-middle">
+                        <button
+                            class="button-edit" type="button"
+                            onclick="editRow(${sh}, ${bs}, ${result.freq.toFixed(1)})">
+                            Edit
+                        </button>
+                         |  
+                        <button 
+                            class="button-delete" type="button" 
+                            data-toggle="modal" data-target="#confirmDeleteModal"
+                            onclick="preDeleteRow(${tbody[0].children.length + 1})">
+                            Delete
+                        </button>
+                    </td>
+                </tr>
+            `
+            tbody.append(tr)
         })
     })
 
@@ -129,7 +136,6 @@ $(document).ready(function(){
                     o : o,
                 }
             }).done(function(result) {
-                console.log(result);
                 if (result.code === 0) {
                     let ratio = Number.parseFloat(o) / Number.parseFloat(bs)
                     let count = $('#tbody tr').length + 1

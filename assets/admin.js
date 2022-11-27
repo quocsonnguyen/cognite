@@ -65,9 +65,11 @@ $(document).ready(function () {
                     let thead = $('#thead')
                     thead.html(`
                         <th scope="col" class="align-middle">#</th>
-                        <th scope="col">Personalised Score</th>
-                        <th scope="col">Current Intensity</th>
-                        <th scope="col" class="align-middle">Performance</th>
+                        <th scope="col">Spherical Head</th>
+                        <th scope="col">Behavioral Score</th>
+                        <th scope="col">Stimulation Intensity</th>
+                        <th scope="col" class="align-middle">Outcome</th>
+                        <th scope="col" class="align-middle">Ratio</th>
                         <th scope="col" class="align-middle">Added Time</th>
                         <th scope="col" class="align-middle">User</th>
                     `)
@@ -79,12 +81,14 @@ $(document).ready(function () {
                         let tr = document.createElement('tr')
                         tr.innerHTML = `
                             <tr>
-                                <th class="align-middle"  scope="row">${i+1}</th>
+                                <th class="align-middle" scope="row">${i+1}</th>
                                 <td class="align-middle">${result.data[i][1]}</td>
-                                <td class="align-middle">${result.data[i][0]}</td>
                                 <td class="align-middle">${result.data[i][2]}</td>
+                                <td class="align-middle">${result.data[i][0]}</td>
                                 <td class="align-middle">${result.data[i][3]}</td>
                                 <td class="align-middle">${result.data[i][4]}</td>
+                                <td class="align-middle">${result.data[i][5]}</td>
+                                <td class="align-middle">${result.data[i][6]}</td>
                             </tr>
                         `
                         tbody.append(tr)
@@ -106,9 +110,11 @@ $(document).ready(function () {
                     let thead = $('#thead')
                     thead.html(`
                         <th scope="col" class="align-middle">#</th>
-                        <th scope="col">Personalised Score</th>
-                        <th scope="col">Current Intensity</th>
-                        <th scope="col" class="align-middle">Performance</th>
+                        <th scope="col">Spherical Head</th>
+                        <th scope="col">Behavioral Score</th>
+                        <th scope="col">Stimulation Intensity</th>
+                        <th scope="col" class="align-middle">Outcome</th>
+                        <th scope="col" class="align-middle">Ratio</th>
                         <th scope="col" class="align-middle">Added Time</th>
                         <th scope="col" class="align-middle">User</th>
                         <th scope="col" class="align-middle">Action</th>
@@ -121,12 +127,14 @@ $(document).ready(function () {
                         let tr = document.createElement('tr')
                         tr.innerHTML = `
                             <tr>
-                                <th class="align-middle"  scope="row">${i+1}</th>
+                                <th class="align-middle" scope="row">${i+1}</th>
                                 <td class="align-middle">${result.data[i][1]}</td>
-                                <td class="align-middle">${result.data[i][0]}</td>
                                 <td class="align-middle">${result.data[i][2]}</td>
+                                <td class="align-middle">${result.data[i][0]}</td>
                                 <td class="align-middle">${result.data[i][3]}</td>
                                 <td class="align-middle">${result.data[i][4]}</td>
+                                <td class="align-middle">${result.data[i][5]}</td>
+                                <td class="align-middle">${result.data[i][6]}</td>
                                 <td class="align-middle">
                                     <button 
                                         class="button-delete" type="button" 
@@ -173,9 +181,18 @@ $(document).ready(function () {
                         $('#current-intensity-inp').val(Number.parseFloat(result.data.currentIntensity).toFixed(4))
                         $('#p-score-inp').val(Number.parseFloat(result.data.personalisedScore).toFixed(4))
                         $('#noise-inp').val(result.data.noise)
-                        $('#v-img-1').attr('src', '/api/image/gp_acq.png/' + Date.now())
-                        $('#v-img-2').attr('src', '/api/image/gp_mean.png/' + Date.now())
-                        $('#v-img-3').attr('src', '/api/image/gp_var.png/' + Date.now())
+
+                        $('#v-img-1').attr('src', '/api/image/int_sphe_gp_acq.png/' + Date.now())
+                        $('#v-img-2').attr('src', '/api/image/int_sphe_gp_mean.png/' + Date.now())
+                        $('#v-img-3').attr('src', '/api/image/int_sphe_gp_var.png/' + Date.now())
+
+                        $('#v-img-4').attr('src', '/api/image/int_beha_gp_acq.png/' + Date.now())
+                        $('#v-img-5').attr('src', '/api/image/int_beha_gp_mean.png/' + Date.now())
+                        $('#v-img-6').attr('src', '/api/image/int_beha_gp_var.png/' + Date.now())
+
+                        $('#v-img-7').attr('src', '/api/image/sphe_beha_gp_acq.png/' + Date.now())
+                        $('#v-img-8').attr('src', '/api/image/sphe_beha_gp_mean.png/' + Date.now())
+                        $('#v-img-9').attr('src', '/api/image/sphe_beha_gp_var.png/' + Date.now())
                     } else {
                         console.log('failed');
                     }

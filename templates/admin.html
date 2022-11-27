@@ -19,19 +19,24 @@
                 <button id="switch-btn" class="btn btn-success">Switch to Backup Data file</button>
                 <input id="current-table" type="hidden" value="global">
                 <h2 class="text-center">Cognite Neuro</h2>
-                <button class="btn btn-success" data-toggle="modal" data-target="#lastActivity">Last activity</button>
+                <div>
+                    <button class="btn btn-success" data-toggle="modal" data-target="#log">Log</button> 
+                    <button class="btn btn-success" data-toggle="modal" data-target="#lastActivity">Last activity</button>
+                </div>
             </div>
 
             <div class="row">
-                <div class="col-5 data-section">
+                <div class="col-7 data-section">
                     <h5 id="type-of-data" class="text-center">Data</h5>
                     <div class="table-data">
                         <table class="table table-striped">
                             <thead id="thead">
                                 <th scope="col" class="align-middle">#</th>
-                                <th scope="col">Personalised Score</th>
-                                <th scope="col">Current Intensity</th>
-                                <th scope="col" class="align-middle">Performance</th>
+                                <th scope="col">Spherical Head</th>
+                                <th scope="col">Behavioral Score</th>
+                                <th scope="col">Stimulation Intensity</th>
+                                <th scope="col" class="align-middle">Outcome</th>
+                                <th scope="col" class="align-middle">Ratio</th>
                                 <th scope="col" class="align-middle">Added Time</th>
                                 <th scope="col" class="align-middle">User</th>
                                 <th scope="col" class="align-middle">Action</th>
@@ -41,10 +46,12 @@
                                     <tr>
                                         <th class="align-middle" scope="row">{{ loop.index0+1 }}</th>
                                         <td class="align-middle">{{ row[1] }}</td>
-                                        <td class="align-middle">{{ row[0] }}</td>
                                         <td class="align-middle">{{ row[2] }}</td>
+                                        <td class="align-middle">{{ row[0] }}</td>
                                         <td class="align-middle">{{ row[3] }}</td>
                                         <td class="align-middle">{{ row[4] }}</td>
+                                        <td class="align-middle">{{ row[5] }}</td>
+                                        <td class="align-middle">{{ row[6] }}</td>
                                         <td class="align-middle">
                                             <button
                                                 class="button-delete" type="button"
@@ -60,7 +67,7 @@
                     </div>
                 </div>
     
-                <div class="col-3">
+                <div class="col-5">
                     <h5 class="text-center">Visualization</h5>
 
                     <div class="visualize-input-section">
@@ -81,7 +88,7 @@
                     <div class="estimated-section">
                         <p class="text-center"><b>Estimated Hyperparameter</b></p>
 
-                        <div class="row estimated-number">
+                        <!-- <div class="row estimated-number">
                             <div class="row e-label-section">
                                 <div class="col-4">
                                     <div class="e-label text-center"><b>Current Intensity lengthscale</b></div>
@@ -104,25 +111,57 @@
                                     <input id="noise-inp" class="estimated-input form-control m-auto" type="text" disabled>
                                 </div>
                             </div>
+                        </div> -->
+                        <div class="row">
+                            <div class="col-4">
+                                <div class="e-label text-center"><b>Current Intensity lengthscale</b></div>
+                                <input id="current-intensity-inp" class="estimated-input form-control m-auto" type="text" disabled>
+                            </div>
+                            <div class="col-4">
+                                <div class="e-label text-center"><b>Personalised Score lengthscale</b></div>
+                                <input id="p-score-inp" class="estimated-input form-control m-auto" type="text" disabled>
+                            </div>
+                            <div class="col-4">
+                                <div class="e-label text-center"><b>Noise Variance</b></div>
+                                <input id="noise-inp" class="estimated-input form-control m-auto" type="text" disabled>
+                            </div>
                         </div>
                     </div>
 
                     <hr>
 
-                    <div class="visualize-image-section">
-                        <div style="margin-top: 10px;">
-                            <img id="v-img-1" class="visualize-image" src="/api/image/gp_acq.png/1" alt="img-1">
+                    <div class="row visualize-image-section">
+                        <div class="col-4">
+                            <img id="v-img-1" class="visualize-image" src="/api/image/int_sphe_gp_acq.png/1" alt="img-1">
                         </div>
-                        <div style="margin-top: 10px;">
-                            <img id="v-img-2" class="visualize-image" src="/api/image/gp_mean.png/2" alt="img-2">
+                        <div class="col-4">
+                            <img id="v-img-2" class="visualize-image" src="/api/image/int_sphe_gp_mean.png/2" alt="img-2">
                         </div>
-                        <div style="margin-top: 10px;">
-                            <img id="v-img-3" class="visualize-image" src="/api/image/gp_var.png/3" alt="img-3">
+                        <div class="col-4">
+                            <img id="v-img-3" class="visualize-image" src="/api/image/int_sphe_gp_var.png/3" alt="img-3">
+                        </div>
+                        <div class="col-4">
+                            <img id="v-img-4" class="visualize-image" src="/api/image/int_beha_gp_acq.png/4" alt="img-4">
+                        </div>
+                        <div class="col-4">
+                            <img id="v-img-5" class="visualize-image" src="/api/image/int_beha_gp_mean.png/5" alt="img-5">
+                        </div>
+                        <div class="col-4">
+                            <img id="v-img-6" class="visualize-image" src="/api/image/int_beha_gp_var.png/6" alt="img-6">
+                        </div>
+                        <div class="col-4">
+                            <img id="v-img-7" class="visualize-image" src="/api/image/sphe_beha_gp_acq.png/7" alt="img-7">
+                        </div>
+                        <div class="col-4">
+                            <img id="v-img-8" class="visualize-image" src="/api/image/sphe_beha_gp_mean.png/8" alt="img-8">
+                        </div>
+                        <div class="col-4">
+                            <img id="v-img-9" class="visualize-image" src="/api/image/sphe_beha_gp_var.png/9" alt="img-9">
                         </div>
                     </div>
                 </div>
     
-                <div class="col-4 instruction-section">
+                <!-- <div class="col-4 instruction-section">
                     <h5 class="text-center">Log</h5>
                     <div class="table-data">
                         <table class="table table-striped">
@@ -144,7 +183,7 @@
                             </tbody>
                         </table>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
 
@@ -170,6 +209,49 @@
                 </div>
             </div>
         </div>
+
+
+        <!-- Modal Log -->
+        <div class="modal fade" id="log" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLabel">Log</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+
+                    <div class="modal-body">
+                        <div class="table-data">
+                            <table class="table table-striped">
+                                <thead>
+                                    <th scope="col" class="align-middle">#</th>
+                                    <th scope="col" class="align-middle">Time</th>
+                                    <th scope="col" class="align-middle">User</th>
+                                    <th scope="col" class="align-middle">Event</th>
+                                </thead>
+                                <tbody id="tbody">
+                                    {% for row in table_history %}
+                                        <tr>
+                                            <th class="align-middle" scope="row">{{ loop.index0+1 }}</th>
+                                            <td class="align-middle">{{ row.time }}</td>
+                                            <td class="align-middle">{{ row.email }}</td>
+                                            <td class="align-middle">{{ row.event }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button id="close-modal-btn" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Modal Last Activity -->
         <div class="modal fade" id="lastActivity" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">

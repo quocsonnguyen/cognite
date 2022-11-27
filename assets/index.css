@@ -83,6 +83,13 @@ input {
     border-radius: 5px;
 }
 
+.button-edit {
+    color: white;
+    background-color: #28a745;
+    border: none;
+    border-radius: 5px;
+}
+
 @media screen and (max-width: 1200px) {
     #instruction-btn {
         display: inline; 

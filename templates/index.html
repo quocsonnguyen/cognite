@@ -52,7 +52,7 @@
                 <div class="col-9 col-lg-8 col-xl-9 data-section">
                     <h5 class="text-center">Data</h5>
                     <div class="table-data">
-                        <table class="table table-striped">
+                        <table id="table-detail" class="table table-striped">
                             <thead>
                                 <th scope="col" class="align-middle">#</th>
                                 <th scope="col">Spherical Head</th>
@@ -73,14 +73,31 @@
                                         <td class="align-middle">{{ row[3] }}</td>
                                         <td class="align-middle">{{ row[4] }}</td>
                                         <td class="align-middle">{{ row[5] }}</td>
-                                        <td class="align-middle">
-                                            <button
-                                                class="button-delete" type="button"
-                                                data-toggle="modal" data-target="#confirmDeleteModal"
-                                                onclick="preDeleteRow('{{ loop.index0+1 }}')">
-                                                Delete
-                                            </button>
-                                        </td>
+                                        {% if row[3] == '-' %}
+                                            <td class="align-middle">
+                                                <button
+                                                    class="button-edit" type="button"
+                                                    onclick="editRow('{{ row[1]}}', '{{ row[2] }}', '{{ row[0] }}')">
+                                                    Edit
+                                                </button>
+                                                 | 
+                                                <button
+                                                    class="button-delete" type="button"
+                                                    data-toggle="modal" data-target="#confirmDeleteModal"
+                                                    onclick="preDeleteRow('{{ loop.index0+1 }}')">
+                                                    Delete
+                                                </button>
+                                            </td>
+                                        {% else %}
+                                            <td class="align-middle">
+                                                <button
+                                                    class="button-delete" type="button"
+                                                    data-toggle="modal" data-target="#confirmDeleteModal"
+                                                    onclick="preDeleteRow('{{ loop.index0+1 }}')">
+                                                    Delete
+                                                </button>
+                                            </td>
+                                        {% endif %}
                                     </tr>
                                 {% endfor %}
                             </tbody>
